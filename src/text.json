@@ -144,11 +144,28 @@
     "clientInvestmentPropertyCurrentBalance8": "",
     "clientInvestmentPropertyCurrentBalance9": "",
     "clientInvestmentPropertyCurrentBalance10": "",
+
+    
+  "clientInvestmentPropertyaddress1": "",
+  "clientInvestmentPropertyaddress2": "",
+  "clientInvestmentPropertyaddress3": "",
+  "clientInvestmentPropertyaddress4": "",
+  "clientInvestmentPropertyaddress5": "",
+  "clientInvestmentPropertyaddress6": "",
+  "clientInvestmentPropertyaddress7": "",
+  "clientInvestmentPropertyaddress8": "",
+  "clientInvestmentPropertyaddress9": "",
+  "clientInvestmentPropertyaddress10": "",
+
     // Business
     "clientTradingCompanyCurrentBalance": "",
     "clientBusinessTrustCurrentBalance": "",
     "clientSMSFCurrentBalance": "",
     "clientInvestmentTrustCurrentBalance": "",
+
+     "clientSMSFName": "",
+  "clientInvestmentTrustName": "",
+  
     //liability Section 
     "clientCreditCards": "",
     "clientPersonalLoans": "",
@@ -230,16 +247,12 @@
     "clientSumOfNCCSuperAndSMSF1": "",
     "clientSumOfNCCSuperAndSMSF2": "",
     "clientSumOfNCCSuperAndSMSF3": "",
-    
     "clientSumOfCCSuperAndSMSF1": "",
     "clientSumOfCCSuperAndSMSF2": "",
     "clientSumOfCCSuperAndSMSF3": "",
     "clientSumOfCCSuperAndSMSF4": "",
     "clientSumOfCCSuperAndSMSF5": "",
     "clientSumOfCCSuperAndSMSF6": "",
-   
-
-
     "clientAccountBasedPensions": [
       {
         "memberName": "",
@@ -293,7 +306,6 @@
         ]
       }
     ],
-
     //SMSF
     "SMSFfundname": "",
     "SMSFABN": "",
@@ -504,11 +516,25 @@
   "homeRenovationsAmount": "",
   "holidayYear": "",
   "holidayAmount": "",
-  "orders": [
-    {
-        dogs: {
-          order: []
-      }
-    }
-  ],
+  "showPolicy1": false,
+  "policyOwner1": "",
+  "lifeInsured1": "",
+  "provider1": "",
+  "policyNumber1": "",
+  "startDate1": "",
+  "renewalMonth1": "",
+  "smoker1": "",
+  "lifeCover1": "",
+  "TPDCover1": "",
+  "Trauma1": "",
+  "premiumPa1": "",
+  "payeeOfPremiums1": "",
+  "premiumtype1": "",
+  "TPDDefinition1": "",
+  "traumaPlus1": "",
+  "CPI1": "",
+  "superLinked1": "",
+  "loadingOrExclusions1": "",
+  "beneficiaryType1": "",
+ 
 }

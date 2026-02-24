@@ -19,6 +19,468 @@ import {
 
 const isEmptyObject = (obj) => !obj || Object.keys(obj).length === 0;
 
+const parseMoney = (value = "$0") =>
+  Number(String(value).replace(/[^0-9.-]+/g, "")) || 0;
+
+function buildPoliciesObject(policies = [], maxPolicies = 10) {
+  const result = {};
+
+  for (let i = 0; i < maxPolicies; i++) {
+    const index = i + 1;
+    const p = policies[i];
+
+    // show flag
+    result[`showPolicy${index}`] = !!p;
+
+    // base fields
+    result[`policyOwner${index}`] = p?.Owner || "";
+    result[`lifeInsured${index}`] = p?.lifeInsured || "";
+    result[`provider${index}`] = p?.provider || "";
+    result[`policyNumber${index}`] = p?.policyNo || "";
+
+    // format date safely
+    result[`startDate${index}`] = p?.startDate
+      ? convertDateAUWithDayJS(p.startDate)
+      : "";
+
+    result[`renewalMonth${index}`] = p?.startDate
+      ? convertDateAUWithDayJS(p.startDate)
+      : "";
+
+    result[`smoker${index}`] = p?.smoker || "";
+
+    // cover amounts
+    result[`lifeCover${index}`] =
+      p?.LifeTPDTraumaDetails?.life || p?.life || "";
+    result[`TPDCover${index}`] = p?.LifeTPDTraumaDetails?.TPD || p?.TPD || "";
+    result[`Trauma${index}`] =
+      p?.LifeTPDTraumaDetails?.trauma || p?.trauma || "";
+
+    // premiums
+    result[`premiumPa${index}`] =
+      p?.premiumsDetails?.totalCost || p?.premiums || "";
+
+    result[`payeeOfPremiums${index}`] = p?.Owner || "";
+
+    result[`premiumtype${index}`] =
+      p?.LifeTPDTraumaDetails?.premiumType || p?.IPDetails?.premiumType || "";
+
+    result[`TPDDefinition${index}`] =
+      p?.LifeTPDTraumaDetails?.TPDDefinition || "";
+
+    result[`traumaPlus${index}`] = p?.LifeTPDTraumaDetails?.traumaPlus || "";
+
+    result[`CPI${index}`] =
+      p?.LifeTPDTraumaDetails?.CPI || p?.IPDetails?.CPI || "";
+
+    result[`superLinked${index}`] =
+      p?.LifeTPDTraumaDetails?.superlinked || p?.IPDetails?.superlinked || "";
+
+    result[`loadingOrExclusions${index}`] =
+      p?.loadingExclusion === "Yes" ? p?.loadingExclusionValue || "Yes" : "No";
+
+    result[`beneficiaryType${index}`] =
+      p?.beneficiary === "Yes" ? p?.beneficiaryDetails || "Yes" : "No";
+  }
+
+  return result;
+}
+
+function PerosonalDetail(personalDetails, user) {
+  let PersonalDetails = {
+    [user + "Title"]: personalDetails?.[user]?.[user + "Title"] || "",
+    [user + "FirstName"]: personalDetails?.[user]?.[user + "GivenName"] || "",
+    [user + "MiddleName"]: personalDetails?.[user]?.[user + "MiddleName"] || "",
+    [user + "LastName"]: personalDetails?.[user]?.[user + "LastName"] || "",
+    [user + "Preferred"]:
+      personalDetails?.[user]?.[user + "PreferredName"] || "",
+    [user + "Gender"]: personalDetails?.[user]?.[user + "Gender"] || "",
+    [user + "Dob"]: personalDetails?.[user]?.[user + "DOB"]
+      ? convertDateAUWithDayJS(personalDetails?.[user]?.[user + "DOB"])
+      : "",
+    [user + "Age"]: personalDetails?.[user]?.[user + "Age"] || "",
+
+    [user + "Marital"]: personalDetails?.[user]?.[user + "MaritalStatus"] || "",
+    [user + "Employment"]:
+      personalDetails?.[user]?.[user + "EmploymentStatus"] || "",
+    [user + "RetAge"]:
+      personalDetails?.[user]?.[user + "PlannedRetirementAge"] || "",
+    [user + "Health"]: personalDetails?.[user]?.[user + "Health"] || "",
+    [user + "Smoker"]: personalDetails?.[user]?.[user + "Smoker"] || "",
+    [user + "TaxRes"]:
+      personalDetails?.[user]?.[user + "TaxResidentRadio"] || "",
+    [user + "HealthCover"]:
+      personalDetails?.[user]?.[user + "PrivateHealthCoverRadio"] || "",
+    [user + "HelpDebt"]:
+      personalDetails?.[user]?.[user + "HELPSDebtRadio"] || "",
+
+    //contect details
+    [user + "HomeAddress"]:
+      personalDetails?.[user]?.[user + "HomeAddress"] || "",
+    [user + "PostalAddress"]:
+      personalDetails?.[user]?.[user + "PostalAddress"] || "",
+    [user + "Mobile"]: personalDetails?.[user]?.[user + "Mobile"] || "",
+    [user + "HomePhone"]: personalDetails?.[user]?.[user + "HomePhone"] || "",
+    [user + "WorkPhone"]: personalDetails?.[user]?.[user + "WorkPhone"] || "",
+    [user + "Email"]:
+      personalDetails?.[user]?.[user == "client" ? "Email" : user + "Email"] ||
+      "", // for Partner its partnerEmail
+  };
+  console.log(user === "client",user);
+
+  if (user === "client") {
+    PersonalDetails.SingleClient = ["Single", "Widowed", ""].includes(
+      personalDetails?.[user]?.[user + "MaritalStatus"] || "",
+    );
+  }
+
+  return PersonalDetails;
+}
+
+function EmpoymentDetal(incomeFromOwnBusiness, user) {
+  let EmpoymentDetals = {
+    [user + "Occupation"]: incomeFromOwnBusiness?.[user]?.occupation || "",
+    [user + "EmploymentStatus"]:
+      incomeFromOwnBusiness?.[user]?.employmentStatus || "",
+    [user + "NameOfCompany"]:
+      incomeFromOwnBusiness?.[user]?.nameOfCompany || "",
+    [user + "StartDate"]: incomeFromOwnBusiness?.[user]?.startDate
+      ? convertDateAUWithDayJS(incomeFromOwnBusiness?.[user]?.startDate)
+      : "",
+
+    [user + "HoursWorked"]: incomeFromOwnBusiness?.[user]?.hoursWorked || "",
+    [user + "GrossSalary"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackageModal?.grossSalary || "",
+    [user + "SGC"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackageModal?.SGC || "",
+    [user + "SalarySacrificeContributions"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackageModal
+        ?.salarySacrificeContributions || "",
+    [user + "AfterTaxContributions"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackageModal
+        ?.afterTaxContributions || "",
+    [user + "ChoiceOfFund"]: incomeFromOwnBusiness?.[user]?.choiceOfFund || "",
+    //Salary Packaging Details
+    [user + "EmployerFBTStatus"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackagingModal?.employerFBTStatus ||
+      "",
+    [user + "CreditCardMortgageRepayments"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackagingModal
+        ?.creditCardMortgageRepayments || "",
+    [user + "CostBaseOfCar"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackagingModal?.costBaseOfCar || "",
+    [user + "FBTPaidByEmployer"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackagingModal?.FBTPaidByEmployer ||
+      "",
+    [user + "RunningCostsOfCar"]:
+      incomeFromOwnBusiness?.[user]?.SalaryPackagingModal?.runningCostsOfCar ||
+      "",
+
+    //Leave Entitlements
+    [user + "Annual"]:
+      (incomeFromOwnBusiness?.[user]?.LeaveEntitlementsModal
+        ?.annualLeaveAmount || "") +
+      (incomeFromOwnBusiness?.[user]?.LeaveEntitlementsModal?.annualLeaveTime ||
+        ""),
+
+    [user + "Sick"]:
+      (incomeFromOwnBusiness?.[user]?.LeaveEntitlementsModal?.sickLeaveAmount ||
+        "") +
+      (incomeFromOwnBusiness?.[user]?.LeaveEntitlementsModal?.sickLeaveTime ||
+        ""),
+    [user + "LongService"]:
+      (incomeFromOwnBusiness?.[user]?.LeaveEntitlementsModal
+        ?.longServiceLeaveAmount || "") +
+      (incomeFromOwnBusiness?.[user]?.LeaveEntitlementsModal
+        ?.longServiceLeaveTime || ""),
+  };
+
+  EmpoymentDetals.coupleEmployment =
+    incomeFromOwnBusiness?.owner?.includes("client") &&
+    incomeFromOwnBusiness?.owner?.includes("partner")
+      ? true
+      : false;
+
+  return EmpoymentDetals;
+}
+
+function Centerlink(incomeFromCentrelink, user) {
+  let CenterlinkData = {
+    [user + "CRN"]: incomeFromCentrelink?.[user]?.CRN || "",
+    [user + "PaymentType"]: (
+      incomeFromCentrelink?.[user]?.paymentType || [""]
+    ).join(", "),
+    [user + "FortnightlyPayment"]:
+      incomeFromCentrelink?.[user]?.fortnightlyPayment || "",
+    [user + "AnnualPaymentAmount"]:
+      incomeFromCentrelink?.[user]?.annualPaymentAmount || "",
+    [user + "CentrelinkCardsHeld"]: (
+      incomeFromCentrelink?.[user]?.centrelinkCardsHeld || [""]
+    ).join(","),
+  };
+
+    CenterlinkData.coupleCenterlink =
+    incomeFromCentrelink?.owner?.includes("client") &&
+    incomeFromCentrelink?.owner?.includes("partner")
+      ? true
+      : false;
+
+  return CenterlinkData;
+}
+
+function Will(will, user) {
+  let CenterlinkData = {
+    [user + "Will"]: will?.owner.includes(user) ? "Yes" : "No",
+    [user + "WillYearSetUp"]: will?.[user]?.yearSetUp || "",
+    [user + "WillsCurrent"]: will?.[user]?.willsCurrent || "",
+    [user + "ExecutorItems"]:
+      will?.[user]?.executor.map((item, index) => {
+        return {
+          executorName: item?.name || "",
+          executerRelationship: item?.relationshipStatus || "",
+        };
+      }) || [],
+    [user + "EnduringGuardianship"]: will?.[user]?.enduringGuardianship || "",
+
+    [user + "EstatePlanningRadio"]: will?.[user]?.estatePlanningRadio || "",
+    [user + "description"]: will?.[user]?.estatePlanningdescription || "",
+  };
+
+  return CenterlinkData;
+}
+
+function INCOME_AND_EXPENSES(allQuestions, CRState, user) {
+  const EmploymentIncome =
+    CRState.incomeFromOwnBusiness == "Yes"
+      ? parseMoney(
+          allQuestions?.incomeFromOwnBusiness?.[user + "Total"] || "$0",
+        )
+      : 0;
+
+  const NetBusinessIncome =
+    (CRState.incomeFromSoleTrader == "Yes"
+      ? parseMoney(allQuestions?.incomeFromSoleTrader?.[user + "Total"] || "$0")
+      : 0) +
+    (CRState.incomeFromPartnership == "Yes"
+      ? parseMoney(
+          allQuestions?.incomeFromPartnership?.[user + "Total"] || "$0",
+        )
+      : 0);
+
+  const SuperPensionPayment =
+    (CRState.accountBasedPensionIssues == "Yes"
+      ? allQuestions?.accountBasedPensionIssues?.[user].reduce(
+          (t, e) =>
+            t +
+            parseFloat((e.pensionPayment || "$0").replace(/[^0-9.-]+/g, "")),
+          0,
+        )
+      : 0) +
+    (CRState.SMSFPensionPhase == "Yes"
+      ? allQuestions?.SMSFPensionPhase?.[user].reduce((Total, e) => {
+          const clientSum = e?.pensionBenefitsTotalArray?.reduce(
+            (benefitTotal, benefit) =>
+              benefitTotal + parseMoney(benefit?.pensionPayment || "$0"),
+            0,
+          );
+
+          return Total + clientSum;
+        }, 0)
+      : 0);
+
+  const LifeTimePensionPayment =
+    CRState.incomeFromSuperPayment == "Yes"
+      ? parseMoney(
+          allQuestions?.incomeFromSuperPayment?.[user + "Total"] || "$0",
+        )
+      : 0;
+
+  const OverseasPensionPayment =
+    CRState.incomeFromOverseasPension == "Yes"
+      ? parseMoney(
+          allQuestions?.incomeFromOverseasPension?.[user + "Total"] || "$0",
+        )
+      : 0;
+
+  const CenterlinkPension =
+    CRState.incomeFromCentrelink == "Yes"
+      ? parseMoney(allQuestions?.incomeFromCentrelink?.[user + "Total"] || "$0")
+      : 0;
+
+  const RentalIncome =
+    CRState?.investmentPropertyDetails == "Yes"
+      ? parseMoney(
+          allQuestions?.investmentPropertyDetails?.client.reduce(
+            (t, e) =>
+              t +
+              parseMoney(e.weeklyRentalIncome || "$0") *
+                52 *
+                (parseMoney(e?.[user + "Ownership"] || "0%") / 100),
+            0,
+          ),
+        )
+      : 0;
+
+  const Interest =
+    ((CRState.bankAccountFinance == "Yes"
+      ? parseMoney(allQuestions?.bankAccountFinance?.[user + "Total"] || "$0")
+      : 0) +
+      (CRState.termDepositsFinance == "Yes"
+        ? parseMoney(
+            allQuestions?.termDepositsFinance?.[user + "Total"] || "$0",
+          )
+        : 0)) *
+    0.03;
+
+  const DividendIncome =
+    ((CRState.australianShareMarket == "Yes"
+      ? parseMoney(
+          allQuestions?.australianShareMarket?.[user + "Total"] || "$0",
+        )
+      : 0) +
+      (CRState.managedFund == "Yes"
+        ? parseMoney(allQuestions?.managedFund?.[user + "Total"] || "$0")
+        : 0)) *
+    0.035;
+
+  const AnnutiesIncome =
+    CRState.annuitiesIssues == "Yes"
+      ? allQuestions?.annuitiesIssues?.[user]?.reduce(
+          (t, e) => t + parseMoney(e.annualAnnuityPayment || "$0"),
+          0,
+        )
+      : 0;
+
+  //following are just clientside expenses, partner side expenses are not included in document as of now
+  const GeneralLivingExpensesTotal =
+    CRState.incomeFromRegularLivingExpenses == "Yes"
+      ? parseMoney(
+          allQuestions?.generalLivingExpenses?.generalLivingExpensesTotal ||
+            "$0",
+        )
+      : 0;
+
+  const FamilyHome =
+    CRState.familyHome == "Yes"
+      ? parseMoney(
+          allQuestions?.familyHome?.HomeLoanModal?.annualRepayments || "$0",
+        )
+      : 0;
+
+  const InvestmentProperty =
+    CRState.investmentPropertyDetails == "Yes"
+      ? allQuestions?.investmentPropertyDetails?.[user]?.reduce(
+          (t, e) => t + parseMoney(e.incomeExpenses || "$0"),
+          0,
+        )
+      : 0;
+
+  const InvestmentPropertyLoan =
+    CRState.investmentPropertyDetails == "Yes"
+      ? allQuestions?.investmentPropertyDetails?.[user]?.reduce(
+          (t, e) =>
+            t +
+            parseMoney(
+              e?.propertyLoanDetailsArray[0]?.AnnualRepayments || "$0",
+            ),
+          0,
+        )
+      : 0;
+
+  const PersonalLoan =
+    CRState.personalLoans == "Yes"
+      ? allQuestions?.personalLoans?.[user]?.reduce(
+          (t, e) => t + parseMoney(e.AnnualRepayments || "$0"),
+          0,
+        )
+      : 0;
+
+  const CreditCards =
+    CRState.creditCards == "Yes"
+      ? allQuestions?.creditCards?.[user]?.reduce(
+          (t, e) => t + parseMoney(e.AnnualRepayments || "$0"),
+          0,
+        )
+      : 0;
+
+  const InvestmentLoan =
+    (CRState.managedFundsLOC == "Yes"
+      ? parseMoney(
+          allQuestions?.managedFundsLOC?.client?.repaymentsAmount || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.managedFundsLOC?.partner?.repaymentsAmount || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.managedFundsLOC?.joint?.repaymentsAmount || "$0",
+        )
+      : 0) +
+    (CRState.managedFundsMarginLoan == "Yes"
+      ? parseMoney(
+          allQuestions?.managedFundsMarginLoan?.client?.annualLoan || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.managedFundsMarginLoan?.partner?.annualLoan || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.managedFundsMarginLoan?.joint?.annualLoan || "$0",
+        )
+      : 0);
+
+  const SuperContributions =
+    CRState.incomeFromOwnBusiness == "Yes"
+      ? parseMoney(
+          allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
+            ?.salarySacrificeContributions || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
+            ?.afterTaxContributions || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
+            ?.salarySacrificeContributions || "$0",
+        ) +
+        parseMoney(
+          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
+            ?.afterTaxContributions || "$0",
+        )
+      : 0;
+
+  let INCOME_AND_EXPENSES_Data = {
+    [user + "EmploymentIncome"]: toCommaAndDollar(EmploymentIncome),
+    [user + "NetBusinessIncome"]: toCommaAndDollar(NetBusinessIncome),
+    [user + "SuperPensionPayment"]: toCommaAndDollar(SuperPensionPayment),
+    [user + "LifeTimePensionPayment"]: toCommaAndDollar(LifeTimePensionPayment),
+    [user + "OverseasPensionPayment"]: toCommaAndDollar(OverseasPensionPayment),
+    [user + "CenterlinkPension"]: toCommaAndDollar(CenterlinkPension),
+    [user + "RentalIncome"]: toCommaAndDollar(RentalIncome),
+    [user + "Interest"]: toCommaAndDollar(Interest),
+    [user + "DividendIncome"]: toCommaAndDollar(DividendIncome),
+    [user + "AnnutiesIncome"]: toCommaAndDollar(AnnutiesIncome),
+
+    // these are just for client's
+    ...(user === "client" && {
+      [user + "GeneralLivingExpensesTotal"]: toCommaAndDollar(
+        GeneralLivingExpensesTotal,
+      ),
+      [user + "FamilyHome"]: toCommaAndDollar(FamilyHome),
+      [user + "InvestmentProperty"]: toCommaAndDollar(InvestmentProperty),
+      [user + "InvestmentPropertyLoan"]: toCommaAndDollar(
+        InvestmentPropertyLoan,
+      ),
+      [user + "PersonalLoan"]: toCommaAndDollar(PersonalLoan),
+      [user + "CreditCards"]: toCommaAndDollar(CreditCards),
+      [user + "InvestmentLoan"]: toCommaAndDollar(InvestmentLoan),
+      [user + "SuperContributions"]: toCommaAndDollar(SuperContributions),
+    }), // if user is client then only include these expenses
+
+    [user + "LessEstimatedTax"]: "", // need Varification
+  };
+
+  return INCOME_AND_EXPENSES_Data;
+}
+
 const GeneraDocument = async (id) => {
   try {
     console.log("Document generation started for ID:", id);
@@ -61,17 +523,17 @@ const GeneraDocument = async (id) => {
       [elem._id]: elem.platformName,
     })).reduce((acc, obj) => ({ ...acc, ...obj }), {});
 
-    // console.log(
-    //   "Recoil values →",
-    //   "PersonalDetail:",
-    //   personalDetails,
-    //   "Questions:",
-    //   allQuestions,
-    //   "Goals:",
-    //   goalsAndObjective,
-    //   "GQState:",
-    //   GQState.clientFK,
-    // );
+    console.log(
+      "Recoil values →",
+      "PersonalDetail:",
+      personalDetails,
+      "Questions:",
+      allQuestions,
+      "Goals:",
+      goalsAndObjective,
+      "GQState:",
+      GQState.clientFK,
+    );
 
     const requests = [];
 
@@ -207,26 +669,10 @@ const GeneraDocument = async (id) => {
       { name: "Other", id: "insuranceOthers" },
     ];
 
-    const parseMoney = (value = "$0") =>
-      Number(String(value).replace(/[^0-9.-]+/g, "")) || 0;
-
-    const clientEmploymentIncome =
-      CRState.incomeFromOwnBusiness == "Yes"
-        ? parseMoney(allQuestions?.incomeFromOwnBusiness?.clientTotal || "$0")
-        : 0;
-
     const partnerEmploymentIncome =
       CRState.incomeFromOwnBusiness == "Yes"
         ? parseMoney(allQuestions?.incomeFromOwnBusiness?.partnerTotal || "$0")
         : 0;
-
-    const clientNetBusinessIncome =
-      (CRState.incomeFromSoleTrader == "Yes"
-        ? parseMoney(allQuestions?.incomeFromSoleTrader?.clientTotal || "$0")
-        : 0) +
-      (CRState.incomeFromPartnership == "Yes"
-        ? parseMoney(allQuestions?.incomeFromPartnership?.clientTotal || "$0")
-        : 0);
 
     const partnerNetBusinessIncome =
       (CRState.incomeFromSoleTrader == "Yes"
@@ -234,30 +680,6 @@ const GeneraDocument = async (id) => {
         : 0) +
       (CRState.incomeFromPartnership == "Yes"
         ? parseMoney(allQuestions?.incomeFromPartnership?.partnerTotal || "$0")
-        : 0);
-
-    const clientSuperPensionPayment =
-      (CRState.accountBasedPensionIssues == "Yes"
-        ? allQuestions?.accountBasedPensionIssues?.client.reduce(
-            (t, e) =>
-              t +
-              parseFloat((e.pensionPayment || "$0").replace(/[^0-9.-]+/g, "")),
-            0,
-          )
-        : 0) +
-      (CRState.SMSFPensionPhase == "Yes"
-        ? allQuestions?.SMSFPensionPhase?.client.reduce(
-            (clientTotal, client) => {
-              const clientSum = client?.pensionBenefitsTotalArray?.reduce(
-                (benefitTotal, benefit) =>
-                  benefitTotal + parseMoney(benefit?.pensionPayment || "$0"),
-                0,
-              );
-
-              return clientTotal + clientSum;
-            },
-            0,
-          )
         : 0);
 
     const partnerSuperPensionPayment =
@@ -284,21 +706,9 @@ const GeneraDocument = async (id) => {
           )
         : 0);
 
-    const clientLifeTimePensionPayment =
-      CRState.incomeFromSuperPayment == "Yes"
-        ? parseMoney(allQuestions?.incomeFromSuperPayment?.clientTotal || "$0")
-        : 0;
-
     const partnerLifeTimePensionPayment =
       CRState.incomeFromSuperPayment == "Yes"
         ? parseMoney(allQuestions?.incomeFromSuperPayment?.partnerTotal || "$0")
-        : 0;
-
-    const clientOverseasPensionPayment =
-      CRState.incomeFromOverseasPension == "Yes"
-        ? parseMoney(
-            allQuestions?.incomeFromOverseasPension?.clientTotal || "$0",
-          )
         : 0;
 
     const partnerOverseasPensionPayment =
@@ -308,28 +718,9 @@ const GeneraDocument = async (id) => {
           )
         : 0;
 
-    const clientCenterlinkPension =
-      CRState.incomeFromCentrelink == "Yes"
-        ? parseMoney(allQuestions?.incomeFromCentrelink?.clientTotal || "$0")
-        : 0;
-
     const partnerCenterlinkPension =
       CRState.incomeFromCentrelink == "Yes"
         ? parseMoney(allQuestions?.incomeFromCentrelink?.partnerTotal || "$0")
-        : 0;
-
-    const clientRentalIncome =
-      CRState?.investmentPropertyDetails == "Yes"
-        ? parseMoney(
-            allQuestions?.investmentPropertyDetails?.client.reduce(
-              (t, e) =>
-                t +
-                parseMoney(e.weeklyRentalIncome || "$0") *
-                  52 *
-                  (parseMoney(e.clientOwnership || "0%") / 100),
-              0,
-            ),
-          )
         : 0;
 
     const partnerRentalIncome =
@@ -346,15 +737,6 @@ const GeneraDocument = async (id) => {
           )
         : 0;
 
-    const clientInterest =
-      ((CRState.bankAccountFinance == "Yes"
-        ? parseMoney(allQuestions?.bankAccountFinance?.clientTotal || "$0")
-        : 0) +
-        (CRState.termDepositsFinance == "Yes"
-          ? parseMoney(allQuestions?.termDepositsFinance?.clientTotal || "$0")
-          : 0)) *
-      0.03;
-
     const partnerInterest =
       ((CRState.bankAccountFinance == "Yes"
         ? parseMoney(allQuestions?.bankAccountFinance?.partnerTotal || "$0")
@@ -363,15 +745,6 @@ const GeneraDocument = async (id) => {
           ? parseMoney(allQuestions?.termDepositsFinance?.partnerTotal || "$0")
           : 0)) *
       0.03;
-
-    const clientDividendIncome =
-      ((CRState.australianShareMarket == "Yes"
-        ? parseMoney(allQuestions?.australianShareMarket?.clientTotal || "$0")
-        : 0) +
-        (CRState.managedFund == "Yes"
-          ? parseMoney(allQuestions?.managedFund?.clientTotal || "$0")
-          : 0)) *
-      0.035;
 
     const partnerDividendIncome =
       ((CRState.australianShareMarket == "Yes"
@@ -382,114 +755,11 @@ const GeneraDocument = async (id) => {
           : 0)) *
       0.035;
 
-    const clientAnnutiesIncome =
-      CRState.annuitiesIssues == "Yes"
-        ? allQuestions?.annuitiesIssues?.client?.reduce(
-            (t, e) => t + parseMoney(e.annualAnnuityPayment || "$0"),
-            0,
-          )
-        : 0;
-
     const partnerAnnutiesIncome =
       CRState.annuitiesIssues == "Yes"
         ? allQuestions?.annuitiesIssues?.partner?.reduce(
             (t, e) => t + parseMoney(e.annualAnnuityPayment || "$0"),
             0,
-          )
-        : 0;
-
-    const clientGeneralLivingExpensesTotal =
-      CRState.incomeFromRegularLivingExpenses == "Yes"
-        ? parseMoney(
-            allQuestions?.generalLivingExpenses?.generalLivingExpensesTotal ||
-              "$0",
-          )
-        : 0;
-
-    const clientFamilyHome =
-      CRState.familyHome == "Yes"
-        ? parseMoney(
-            allQuestions?.familyHome?.HomeLoanModal?.annualRepayments || "$0",
-          )
-        : 0;
-
-    const clientInvestmentProperty =
-      CRState.investmentPropertyDetails == "Yes"
-        ? allQuestions?.investmentPropertyDetails?.client?.reduce(
-            (t, e) => t + parseMoney(e.incomeExpenses || "$0"),
-            0,
-          )
-        : 0;
-
-    const clientInvestmentPropertyLoan =
-      CRState.investmentPropertyDetails == "Yes"
-        ? allQuestions?.investmentPropertyDetails?.client?.reduce(
-            (t, e) =>
-              t +
-              parseMoney(
-                e?.propertyLoanDetailsArray[0]?.AnnualRepayments || "$0",
-              ),
-            0,
-          )
-        : 0;
-
-    const clientPersonalLoan =
-      CRState.personalLoans == "Yes"
-        ? allQuestions?.personalLoans?.client?.reduce(
-            (t, e) => t + parseMoney(e.AnnualRepayments || "$0"),
-            0,
-          )
-        : 0;
-
-    const clientCreditCards =
-      CRState.creditCards == "Yes"
-        ? allQuestions?.creditCards?.client?.reduce(
-            (t, e) => t + parseMoney(e.AnnualRepayments || "$0"),
-            0,
-          )
-        : 0;
-
-    const clientInvestmentLoan =
-      (CRState.managedFundsLOC == "Yes"
-        ? parseMoney(
-            allQuestions?.managedFundsLOC?.client?.repaymentsAmount || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.managedFundsLOC?.partner?.repaymentsAmount || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.managedFundsLOC?.joint?.repaymentsAmount || "$0",
-          )
-        : 0) +
-      (CRState.managedFundsMarginLoan == "Yes"
-        ? parseMoney(
-            allQuestions?.managedFundsMarginLoan?.client?.annualLoan || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.managedFundsMarginLoan?.partner?.annualLoan || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.managedFundsMarginLoan?.joint?.annualLoan || "$0",
-          )
-        : 0);
-
-    const clientSuperContributions =
-      CRState.incomeFromOwnBusiness == "Yes"
-        ? parseMoney(
-            allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
-              ?.salarySacrificeContributions || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
-              ?.afterTaxContributions || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-              ?.salarySacrificeContributions || "$0",
-          ) +
-          parseMoney(
-            allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-              ?.afterTaxContributions || "$0",
           )
         : 0;
 
@@ -659,6 +929,7 @@ const GeneraDocument = async (id) => {
     let payload = {
       clientName: personalDetails?.client?.clientGivenName || "",
       adviserName: adviserName || "",
+
       downloadDate: new Date().toLocaleDateString("en-AU", {
         day: "2-digit",
         month: "2-digit",
@@ -690,127 +961,17 @@ const GeneraDocument = async (id) => {
           childDepenantChild: child?.depenantChild || "",
         })) || [],
 
-      //client Data
-      clientTitle: personalDetails?.client?.clientTitle || "",
-      clientFirstName: personalDetails?.client?.clientGivenName || "",
-      clientMiddleName: personalDetails?.client?.clientMiddleName || "",
-      clientLastName: personalDetails?.client?.clientLastName || "",
-      clientPreferred: personalDetails?.client?.clientPreferredName || "",
-      clientGender: personalDetails?.client?.clientGender || "",
-      clientDob: personalDetails?.client?.clientDOB
-        ? convertDateAUWithDayJS(personalDetails?.client?.clientDOB)
-        : "",
-      clientAge: personalDetails?.client?.clientAge || "",
-      clientMarital: personalDetails?.client?.clientMaritalStatus || "",
-      clientEmployment: personalDetails?.client?.clientEmploymentStatus || "",
-      clientRetAge: personalDetails?.client?.clientPlannedRetirementAge || "",
-      clientHealth: personalDetails?.client?.clientHealth || "",
-      clientSmoker: personalDetails?.client?.clientSmoker || "",
-      clientTaxRes: personalDetails?.client?.clientTaxResidentRadio || "",
-      clientHealthCover:
-        personalDetails?.client?.clientPrivateHealthCoverRadio || "",
-      clientHelpDebt: personalDetails?.client?.clientHELPSDebtRadio || "",
-      //contect details
-      clientHomeAddress: personalDetails?.client?.clientHomeAddress || "",
-      clientPostalAddress: personalDetails?.client?.clientPostalAddress || "",
-      clientMobile: personalDetails?.client?.clientMobile || "",
-      clientHomePhone: personalDetails?.client?.clientHomePhone || "",
-      clientWorkPhone: personalDetails?.client?.clientWorkPhone || "",
-      clientEmail: personalDetails?.client?.Email || "", // for Partner its partnerEmail
+      //client Personal Details
+      ...PerosonalDetail(personalDetails, "client"),
 
       //Employment Details
-      clientOccupation:
-        allQuestions?.incomeFromOwnBusiness?.client?.occupation || "",
-      clientEmploymentStatus:
-        allQuestions?.incomeFromOwnBusiness?.client?.employmentStatus || "",
-      clientNameOfCompany:
-        allQuestions?.incomeFromOwnBusiness?.client?.nameOfCompany || "",
-      clientStartDate: allQuestions?.incomeFromOwnBusiness?.client?.startDate
-        ? convertDateAUWithDayJS(
-            allQuestions?.incomeFromOwnBusiness?.client?.startDate,
-          )
-        : "",
-      clientHoursWorked:
-        allQuestions?.incomeFromOwnBusiness?.client?.hoursWorked || "",
-      clientGrossSalary:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
-          ?.grossSalary || "",
-      clientSGC:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal?.SGC ||
-        "",
-      clientSalarySacrificeContributions:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
-          ?.salarySacrificeContributions || "",
-      clientAfterTaxContributions:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackageModal
-          ?.afterTaxContributions || "",
-      clientChoiceOfFund:
-        allQuestions?.incomeFromOwnBusiness?.client?.choiceOfFund || "",
-      //Salary Packaging Details
-      clientEmployerFBTStatus:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackagingModal
-          ?.employerFBTStatus || "",
-      clientCreditCardMortgageRepayments:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackagingModal
-          ?.creditCardMortgageRepayments || "",
-      clientCostBaseOfCar:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackagingModal
-          ?.costBaseOfCar || "",
-      clientFBTPaidByEmployer:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackagingModal
-          ?.FBTPaidByEmployer || "",
-      clientRunningCostsOfCar:
-        allQuestions?.incomeFromOwnBusiness?.client?.SalaryPackagingModal
-          ?.runningCostsOfCar || "",
-      //Leave Entitlements
-      clientAnnual:
-        (allQuestions?.incomeFromOwnBusiness?.client?.LeaveEntitlementsModal
-          ?.annualLeaveAmount || "") +
-        (allQuestions?.incomeFromOwnBusiness?.client?.LeaveEntitlementsModal
-          ?.annualLeaveTime || ""),
-      clientSick:
-        (allQuestions?.incomeFromOwnBusiness?.client?.LeaveEntitlementsModal
-          ?.sickLeaveAmount || "") +
-        (allQuestions?.incomeFromOwnBusiness?.client?.LeaveEntitlementsModal
-          ?.sickLeaveTime || ""),
-      clientLongService:
-        (allQuestions?.incomeFromOwnBusiness?.client?.LeaveEntitlementsModal
-          ?.longServiceLeaveAmount || "") +
-        (allQuestions?.incomeFromOwnBusiness?.client?.LeaveEntitlementsModal
-          ?.longServiceLeaveTime || ""),
+      ...EmpoymentDetal(allQuestions?.incomeFromOwnBusiness, "client"),
 
       //Centerlink Details
-      clientCRN: allQuestions?.incomeFromCentrelink?.client?.CRN || "",
-      clientPaymentType: (
-        allQuestions?.incomeFromCentrelink?.client?.paymentType || [""]
-      ).join(", "),
-      clientFortnightlyPayment:
-        allQuestions?.incomeFromCentrelink?.client?.fortnightlyPayment || "",
-      clientAnnualPaymentAmount:
-        allQuestions?.incomeFromCentrelink?.client?.annualPaymentAmount || "",
-      clientCentrelinkCardsHeld: (
-        allQuestions?.incomeFromCentrelink?.client?.centrelinkCardsHeld || [""]
-      ).join(","),
+      ...Centerlink(allQuestions?.incomeFromCentrelink, "client"),
 
       //Will
-      clientWill: allQuestions?.will?.owner.includes("client") ? "Yes" : "No",
-      clientWillYearSetUp: allQuestions?.will?.client?.yearSetUp || "",
-      clientWillsCurrent: allQuestions?.will?.client?.willsCurrent || "",
-      clientExecutorItems:
-        allQuestions?.will?.client?.executor.map((item, index) => {
-          return {
-            executorName: item?.name || "",
-            executerRelationship: item?.relationshipStatus || "",
-          };
-        }) || [],
-
-      clientEnduringGuardianship:
-        allQuestions?.will?.client?.enduringGuardianship || "",
-
-      clientEstatePlanningRadio:
-        allQuestions?.will?.client?.estatePlanningRadio || "",
-      clientdescription:
-        allQuestions?.will?.client?.estatePlanningdescription || "",
+      ...Will(allQuestions?.will, "client"),
 
       // we might need it
       // "clientTestamentaryTrust": "",
@@ -839,36 +1000,8 @@ const GeneraDocument = async (id) => {
           };
         }) || [],
 
-      clientEmploymentIncome: toCommaAndDollar(clientEmploymentIncome),
-      clientNetBusinessIncome: toCommaAndDollar(clientNetBusinessIncome),
-      clientSuperPensionPayment: toCommaAndDollar(clientSuperPensionPayment),
-      clientLifeTimePensionPayment: toCommaAndDollar(
-        clientLifeTimePensionPayment,
-      ),
-      clientOverseasPensionPayment: toCommaAndDollar(
-        clientOverseasPensionPayment,
-      ),
-      clientCenterlinkPension: toCommaAndDollar(clientCenterlinkPension),
-      clientRentalIncome: toCommaAndDollar(clientRentalIncome),
-      clientInterest: toCommaAndDollar(clientInterest),
-      clientDividendIncome: toCommaAndDollar(clientDividendIncome),
-      clientAnnutiesIncome: toCommaAndDollar(clientAnnutiesIncome),
-
-      // these are just for clients
-
-      clientGeneralLivingExpensesTotal: toCommaAndDollar(
-        clientGeneralLivingExpensesTotal,
-      ),
-      clientFamilyHome: toCommaAndDollar(clientFamilyHome),
-      clientInvestmentProperty: toCommaAndDollar(clientInvestmentProperty),
-      clientInvestmentPropertyLoan: toCommaAndDollar(
-        clientInvestmentPropertyLoan,
-      ),
-      clientPersonalLoan: toCommaAndDollar(clientPersonalLoan),
-      clientCreditCards: toCommaAndDollar(clientCreditCards),
-      clientInvestmentLoan: toCommaAndDollar(clientInvestmentLoan),
-      clientSuperContributions: toCommaAndDollar(clientSuperContributions),
-      clientLessEstimatedTax: "", // need Varification
+      //INCOME AND EXPENSES Table
+      ...INCOME_AND_EXPENSES(allQuestions, CRState, "client"),
 
       //Summary of Networth
       //lifeStyle Assets
@@ -944,6 +1077,20 @@ const GeneraDocument = async (id) => {
         ]),
       ),
 
+      ...Object.fromEntries(
+        Array.from({ length: 10 }, (_, i) => [
+          `clientInvestmentPropertyaddress${i + 1}`,
+          allQuestions?.investmentPropertyDetails?.client?.[i]?.PropertyAddress
+            ? (allQuestions?.investmentPropertyDetails?.client?.[i]
+                ?.PropertyAddress || "") +
+              " (" +
+              (allQuestions?.investmentPropertyDetails?.client?.[i]
+                ?.postcodeSuburb || "") +
+              ") "
+            : "",
+        ]),
+      ),
+
       clientInvestmentLoanBalanvce:
         allQuestions?.managedFundsLOC?.client?.loanBalance || "$0",
       clientMarginLoanBalance:
@@ -982,9 +1129,13 @@ const GeneraDocument = async (id) => {
 
                   return {
                     ...element,
-                    investmentOption: investment.arrayOfOffers.find(
-                      (elem) => elem._id === element.investmentOption,
-                    ).investmentName,
+                    investmentOption:
+                      investment?.arrayOfOffers &&
+                      investment.arrayOfOffers.length > 0
+                        ? investment.arrayOfOffers.find(
+                            (elem) => elem._id === element.investmentOption,
+                          ).investmentName
+                        : "",
                   };
                 },
               );
@@ -1081,7 +1232,7 @@ const GeneraDocument = async (id) => {
                     ? item?.contributionsArray
                         ?.map((e, i) => {
                           return {
-                            year: item?.contributionsStartYear + i+1,
+                            year: item?.contributionsStartYear + i + 1,
                             nonConcessionalContributions:
                               e.nonConcessionalContributions || "$0",
                           };
@@ -1094,7 +1245,7 @@ const GeneraDocument = async (id) => {
                     ? item?.contributionsArray
                         ?.map((e, i) => {
                           return {
-                            year: item?.contributionsStartYear + i+1,
+                            year: item?.contributionsStartYear + i + 1,
                             totalConcessional: e.totalConcessional || "$0",
                           };
                         })
@@ -1287,144 +1438,17 @@ const GeneraDocument = async (id) => {
         personalDetails?.client?.clientMaritalStatus || "",
       )
         ? {
-            //partner Data
-            partnerTitle: personalDetails?.partner?.partnerTitle || "",
-            partnerFirstName: personalDetails?.partner?.partnerGivenName || "",
-            partnerMiddleName:
-              personalDetails?.partner?.partnerMiddleName || "",
-            partnerLastName: personalDetails?.partner?.partnerLastName || "",
-            partnerPreferred:
-              personalDetails?.partner?.partnerPreferredName || "",
-            partnerGender: personalDetails?.partner?.partnerGender || "",
-            partnerDob: personalDetails?.partner?.partnerDOB
-              ? convertDateAUWithDayJS(personalDetails?.partner?.partnerDOB)
-              : "",
-            partnerAge: personalDetails?.partner?.partnerAge || "",
-            partnerMarital:
-              personalDetails?.partner?.partnerMaritalStatus || "",
-            partnerEmployment:
-              personalDetails?.partner?.partnerEmploymentStatus || "",
-            partnerRetAge:
-              personalDetails?.partner?.partnerPlannedRetirementAge || "",
-            partnerHealth: personalDetails?.partner?.partnerHealth || "",
-            partnerSmoker: personalDetails?.partner?.partnerSmoker || "",
-            partnerTaxRes:
-              personalDetails?.partner?.partnerTaxResidentRadio || "",
-            partnerHealthCover:
-              personalDetails?.partner?.partnerPrivateHealthCoverRadio || "",
-            partnerHelpDebt:
-              personalDetails?.partner?.partnerHELPSDebtRadio || "",
-            //contect details
-            partnerHomeAddress:
-              personalDetails?.partner?.partnerHomeAddress || "",
-            partnerPostalAddress:
-              personalDetails?.partner?.partnerPostalAddress || "",
-            partnerMobile: personalDetails?.partner?.partnerMobile || "",
-            partnerHomePhone: personalDetails?.partner?.partnerHomePhone || "",
-            partnerWorkPhone: personalDetails?.partner?.partnerWorkPhone || "",
-            partnerEmail: personalDetails?.partner?.partnerEmail || "", // for Partner its partnerEmail
+            //client Personal Details
+            ...PerosonalDetail(personalDetails, "partner"),
 
             //Employment Details
-            partnerOccupation:
-              allQuestions?.incomeFromOwnBusiness?.partner?.occupation || "",
-            partnerEmploymentStatus:
-              allQuestions?.incomeFromOwnBusiness?.partner?.employmentStatus ||
-              "",
-            partnerNameOfCompany:
-              allQuestions?.incomeFromOwnBusiness?.partner?.nameOfCompany || "",
-            partnerStartDate: allQuestions?.incomeFromOwnBusiness?.partner
-              ?.startDate
-              ? convertDateAUWithDayJS(
-                  allQuestions?.incomeFromOwnBusiness?.partner?.startDate,
-                )
-              : "",
-            partnerHoursWorked:
-              allQuestions?.incomeFromOwnBusiness?.partner?.hoursWorked || "",
-            partnerGrossSalary:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-                ?.grossSalary || "",
-            partnerSGC:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-                ?.SGC || "",
-            partnerSalarySacrificeContributions:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-                ?.salarySacrificeContributions || "",
-            partnerAfterTaxContributions:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-                ?.afterTaxContributions || "",
-            partnerChoiceOfFund:
-              allQuestions?.incomeFromOwnBusiness?.partner?.choiceOfFund || "",
-            //Salary Packaging Details
-            partnerEmployerFBTStatus:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-                ?.employerFBTStatus || "",
-            partnerCreditCardMortgageRepayments:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-                ?.creditCardMortgageRepayments || "",
-            partnerCostBaseOfCar:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-                ?.costBaseOfCar || "",
-            partnerFBTPaidByEmployer:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-                ?.FBTPaidByEmployer || "",
-            partnerRunningCostsOfCar:
-              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-                ?.runningCostsOfCar || "",
-            //Leave Entitlements
-            partnerAnnual:
-              (allQuestions?.incomeFromOwnBusiness?.partner
-                ?.LeaveEntitlementsModal?.annualLeaveAmount || "") +
-              (allQuestions?.incomeFromOwnBusiness?.partner
-                ?.LeaveEntitlementsModal?.annualLeaveTime || ""),
-            partnerSick:
-              (allQuestions?.incomeFromOwnBusiness?.partner
-                ?.LeaveEntitlementsModal?.sickLeaveAmount || "") +
-              (allQuestions?.incomeFromOwnBusiness?.partner
-                ?.LeaveEntitlementsModal?.sickLeaveTime || ""),
-            partnerLongService:
-              (allQuestions?.incomeFromOwnBusiness?.partner
-                ?.LeaveEntitlementsModal?.longServiceLeaveAmount || "") +
-              (allQuestions?.incomeFromOwnBusiness?.partner
-                ?.LeaveEntitlementsModal?.longServiceLeaveTime || ""),
+            ...EmpoymentDetal(allQuestions?.incomeFromOwnBusiness, "partner"),
 
             //Centerlink Details
-            partnerCRN: allQuestions?.incomeFromCentrelink?.partner?.CRN || "",
-            partnerPaymentType: (
-              allQuestions?.incomeFromCentrelink?.partner?.paymentType || [""]
-            ).join(", "),
-            partnerFortnightlyPayment:
-              allQuestions?.incomeFromCentrelink?.partner?.fortnightlyPayment ||
-              "",
-            partnerAnnualPaymentAmount:
-              allQuestions?.incomeFromCentrelink?.partner
-                ?.annualPaymentAmount || "",
-            partnerCentrelinkCardsHeld: (
-              allQuestions?.incomeFromCentrelink?.partner
-                ?.centrelinkCardsHeld || [""]
-            ).join(","),
+            ...Centerlink(allQuestions?.incomeFromCentrelink, "partner"),
 
             //Will
-            partnerWill: allQuestions?.will?.owner.includes("partner")
-              ? "Yes"
-              : "No",
-            partnerWillYearSetUp: allQuestions?.will?.partner?.yearSetUp || "",
-            partnerWillsCurrent:
-              allQuestions?.will?.partner?.willsCurrent || "",
-            partnerExecutorItems:
-              allQuestions?.will?.partner?.executor.map((item, index) => {
-                return {
-                  executorName: item?.name || "",
-                  executerRelationship: item?.relationshipStatus || "",
-                };
-              }) || [],
-
-            partnerEnduringGuardianship:
-              allQuestions?.will?.partner?.enduringGuardianship || "",
-
-            partnerEstatePlanningRadio:
-              allQuestions?.will?.partner?.estatePlanningRadio || "",
-            partnerdescription:
-              allQuestions?.will?.partner?.estatePlanningdescription || "",
+            ...Will(allQuestions?.will, "partner"),
 
             // we might need it
             // "partnerTestamentaryTrust": "",
@@ -1453,27 +1477,11 @@ const GeneraDocument = async (id) => {
                 };
               }) || [],
 
-            partnerEmploymentIncome: toCommaAndDollar(partnerEmploymentIncome),
-            partnerNetBusinessIncome: toCommaAndDollar(
-              partnerNetBusinessIncome,
-            ),
-            partnerSuperPensionPayment: toCommaAndDollar(
-              partnerSuperPensionPayment,
-            ),
-            partnerLifeTimePensionPayment: toCommaAndDollar(
-              partnerLifeTimePensionPayment,
-            ),
-            partnerOverseasPensionPayment: toCommaAndDollar(
-              partnerOverseasPensionPayment,
-            ),
-            partnerCenterlinkPension: toCommaAndDollar(
-              partnerCenterlinkPension,
-            ),
-            partnerRentalIncome: toCommaAndDollar(partnerRentalIncome),
-            partnerInterest: toCommaAndDollar(partnerInterest),
-            partnerDividendIncome: toCommaAndDollar(partnerDividendIncome),
-            partnerAnnutiesIncome: toCommaAndDollar(partnerAnnutiesIncome),
+            //INCOME AND EXPENSES Table
+            ...INCOME_AND_EXPENSES(allQuestions, CRState, "partner"),
 
+            //Summary of Networth
+            //lifeStyle Assets
             partnerCarCurrentValue:
               allQuestions?.car?.partner?.currentValue || "$0",
             partnerContentsCurrentValue:
@@ -2060,7 +2068,7 @@ const GeneraDocument = async (id) => {
             partnerAnnuties: [],
           }),
 
-      //joint
+      // //joint
       ...(!["Single", "Widowed", ""].includes(
         personalDetails?.client?.clientMaritalStatus || "",
       )
@@ -2631,6 +2639,11 @@ const GeneraDocument = async (id) => {
         allQuestions?.familyAustralianShare?.trust.length > 0
           ? allQuestions?.familyAustralianShare?.trust
           : [],
+
+      ...buildPoliciesObject(
+        allQuestions?.personalInsurance?.client?.PersonalInsurance,
+        allQuestions?.personalInsurance?.client?.PersonalInsurance.length,
+      ),
     };
 
     const sumByPrefix = (prefix) => {
@@ -3315,10 +3328,16 @@ const GeneraDocument = async (id) => {
       );
     }
 
-    console.log(
-      "Document Payload:",
-      payload,
-    );
+    for (
+      let i =
+        allQuestions?.personalInsurance?.client?.PersonalInsurance.length + 1;
+      i <= 10;
+      i++
+    ) {
+      payload[`showPolicy${i}`] = false;
+    }
+
+    console.log("Document Payload:", payload);
 
     await generateDocumentFromTemplate(
       payload,
