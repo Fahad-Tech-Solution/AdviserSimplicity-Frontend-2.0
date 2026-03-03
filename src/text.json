@@ -118,6 +118,8 @@
   "clientInvestmentLoan": "",
   "clientSuperContributions": "",
   "clientLessEstimatedTax": "",
+  "clientFamilyHomeCurrentValue": "",
+  "clientFamilyHomeAddress": "",
   "clientCarCurrentValue": "",
   "clientContentsCurrentValue": "",
   "clientBoatCurrentValue": "",
@@ -1076,6 +1078,7 @@
   "jointTradingCompanyCurrentBalance": "",
   "jointBusinessTrustCurrentBalance": "",
   "jointBusinessAssetsCurrentBalance": "",
+  "clientFamilyHomeLoanBalance": "",
   "clientLiabilityCreditCards": "",
   "clientPersonalLoans": "",
   "jointLiabilityCreditCards": "",
@@ -1267,42 +1270,28 @@
       "currentBalance": ""
     }
   ],
-  "SMSF": {
-    "client": {
-      "currentBalance": "",
-      "eligibleServiceDate": "",
-      "commencementDate": "",
-      "taxFreeComponent": "",
-      "taxableComponent": "",
-      "restrictedNonPreserved": "",
-      "unRestrictedNonPreserved": "",
-      "preservedAmount": ""
-    },
-    "partner": {
-      "currentBalance": "",
-      "eligibleServiceDate": "",
-      "commencementDate": "",
-      "taxFreeComponent": "",
-      "taxableComponent": "",
-      "restrictedNonPreserved": "",
-      "unRestrictedNonPreserved": "",
-      "preservedAmount": ""
-    },
-    "nonConcessionalArray": [
-      {
-        "clientNonConcessionalContributions": "",
-        "partnerNonConcessionalContributions": "",
-        "year": 6
-      }
-    ],
-    "ConcessionalArray": [
-      {
-        "clientConcessionalContributions": "",
-        "partnerConcessionalContributions": "",
-        "year": 6
-      }
-    ]
-  },
+
+
+  "SMSFAccumulation_nonConcessionalArray": "",
+    "SMSFAccumulation_ConcessionalArray": "", 
+    "SMSFAccumulation_client_currentBalance": "",
+    "SMSFAccumulation_client_eligibleServiceDate":"",
+    "SMSFAccumulation_client_commencementDate": "",
+    "SMSFAccumulation_client_taxFreeComponent": "",
+    "SMSFAccumulation_client_taxableComponent": "",
+    "SMSFAccumulation_client_restrictedNonPreserved": "",
+    "SMSFAccumulation_client_unRestrictedNonPreserved": "",
+    "SMSFAccumulation_client_preservedAmount": "",
+
+    "SMSFAccumulation_partner_currentBalance": "",
+    "SMSFAccumulation_partner_eligibleServiceDate": "",
+    "SMSFAccumulation_partner_commencementDate": "",
+    "SMSFAccumulation_partner_taxFreeComponent": "",
+    "SMSFAccumulation_partner_taxableComponent": "",
+    "SMSFAccumulation_partner_restrictedNonPreserved": "",
+    "SMSFAccumulation_partner_unRestrictedNonPreserved": "",
+    "SMSFAccumulation_partner_preservedAmount": "",
+  
   "FamilyTrustTrustName": "",
   "FamilyTrustABN": "",
   "FamilyTrustRegisteredOffice": "",
