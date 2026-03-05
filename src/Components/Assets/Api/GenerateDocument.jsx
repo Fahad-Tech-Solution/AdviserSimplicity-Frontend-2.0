@@ -31,6 +31,13 @@ function toIdNameMap(arr = []) {
   }, {});
 }
 
+const RemoveSpan = (text) => {
+  let cleanedText = text.replace(/<span[^>]*>|<\/span>/g, "");
+  cleanedText = cleanedText.replace(/<strong[^>]*>|<\/strong>/g, "");
+  cleanedText = cleanedText.replace(/<br>/g, "");
+  return cleanedText;
+};
+
 function PerosonalDetail(personalDetails, user) {
   let PersonalDetails = {
     [user + "Title"]: personalDetails?.[user]?.[user + "Title"] || "",
@@ -678,22 +685,22 @@ function Summary_of_Networth(allQuestions, CRState, personalDetails, user) {
   /* -------------------- Investment Assets -------------------- */
 
   const investmentStaticKeys = {
-    BankAccountCurrentBalance:
-      allQuestions?.bankAccountFinance?.[user + "CurrentBalance"],
-    TermDepositsCurrentBalance:
-      allQuestions?.termDepositsFinance?.[user + "CurrentBalance"],
-    AustralianSharesCurrentBalance:
-      allQuestions?.australianShareMarket?.[user + "CurrentBalance"],
-    PlatformInvestmentsCurrentBalance:
-      allQuestions?.managedFund?.[user + "CurrentBalance"],
-    InvestmentBondsCurrentBalance:
-      allQuestions?.investmentBondFinance?.[user + "CurrentBalance"],
-    SuperannuationCurrentBalance:
-      allQuestions?.superAnnuationIssues?.[user + "CurrentBalance"],
+    BankAccountCurrentBalance:CRState?.bankAccountFinance=="Yes"?
+      allQuestions?.bankAccountFinance?.[user + "CurrentBalance"]:"$0",
+    TermDepositsCurrentBalance:CRState?.termDepositsFinance=="Yes"?
+      allQuestions?.termDepositsFinance?.[user + "CurrentBalance"]:"$0",
+    AustralianSharesCurrentBalance:CRState?.australianShareMarket=="Yes"?
+      allQuestions?.australianShareMarket?.[user + "CurrentBalance"]:"$0",
+    PlatformInvestmentsCurrentBalance:CRState?.managedFund=="Yes"?
+      allQuestions?.managedFund?.[user + "CurrentBalance"]:"$0",
+    InvestmentBondsCurrentBalance:CRState?.investmentBondFinance=="Yes"?
+      allQuestions?.investmentBondFinance?.[user + "CurrentBalance"]:"$0",
+    SuperannuationCurrentBalance:CRState?.superAnnuationIssues=="Yes"?
+      allQuestions?.superAnnuationIssues?.[user + "CurrentBalance"]:"$0",
     AccountBasedPensionsCurrentBalance:
-      allQuestions?.accountBasedPensionIssues?.[user + "CurrentBalance"],
-    AnnuitiesCurrentBalance:
-      allQuestions?.annuitiesIssues?.[user + "CurrentBalance"],
+      CRState?.accountBasedPensionIssues=="Yes"? allQuestions?.accountBasedPensionIssues?.[user + "CurrentBalance"]:"$0",
+    AnnuitiesCurrentBalance:CRState?.annuitiesIssues=="Yes"?
+      allQuestions?.annuitiesIssues?.[user + "CurrentBalance"]:"$0",
   };
 
   Object.entries(investmentStaticKeys).forEach(([key, value]) => {
@@ -898,46 +905,51 @@ function generateUserFinancialPortfolioData(
 
     /* ---- Bank Accounts ---- */
 
-    data[user + "BankAccounts"] = mapArray(
-      allQuestions?.SMSFBank?.[user],
-      (item) => ({
-        ...item,
-        Institution: bankMaps.banks[item.Institution],
-      }),
-    );
+    data[user + "BankAccounts"] =
+      CRState?.SMSFBank == "Yes"
+        ? mapArray(allQuestions?.SMSFBank?.[user], (item) => ({
+            ...item,
+            Institution: bankMaps.banks[item.Institution],
+          }))
+        : [];
 
-    data[user + "TermDeposits"] = mapArray(
-      allQuestions?.SMSFTermDeposits?.[user],
-      (item) => ({
-        ...item,
-        Institution: bankMaps.banks[item.Institution],
-      }),
-    );
+    data[user + "TermDeposits"] =
+      CRState?.SMSFTermDeposits == "Yes"
+        ? mapArray(allQuestions?.SMSFTermDeposits?.[user], (item) => ({
+            ...item,
+            Institution: bankMaps.banks[item.Institution],
+          }))
+        : [];
 
     data[user + "AustralianShare"] =
-      allQuestions?.SMSFAustralianShares?.[user] || [];
+      CRState?.SMSFAustralianShares == "Yes"
+        ? allQuestions?.SMSFAustralianShares?.[user] || []
+        : [];
 
     /* ---- Platform Investments ---- */
 
-    data[user + "PlatFromInvestment"] = mapArray(
-      allQuestions?.SMSFManagedFunds?.[user],
-      (item) => ({
-        ...item,
-        platformName: resolvePlatformName(
-          bankMaps.platforms,
-          item.platformName,
-        ),
-        owner: personalDetails?.client?.["clientPreferredName"] || "",
-        portfolioValueArray: mapArray(item.portfolioValueArray, (element) => ({
-          ...element,
-          investmentOption: resolveInvestmentOption(
-            bankDetailObj.InvestmentPlatforms,
-            item.platformName,
-            element.investmentOption,
-          ),
-        })),
-      }),
-    );
+    data[user + "PlatFromInvestment"] =
+      CRState?.SMSFManagedFunds == "Yes"
+        ? mapArray(allQuestions?.SMSFManagedFunds?.[user], (item) => ({
+            ...item,
+            platformName: resolvePlatformName(
+              bankMaps.platforms,
+              item.platformName,
+            ),
+            owner: personalDetails?.client?.["clientPreferredName"] || "",
+            portfolioValueArray: mapArray(
+              item.portfolioValueArray,
+              (element) => ({
+                ...element,
+                investmentOption: resolveInvestmentOption(
+                  bankDetailObj.InvestmentPlatforms,
+                  item.platformName,
+                  element.investmentOption,
+                ),
+              }),
+            ),
+          }))
+        : [];
 
     return data;
   }
@@ -947,46 +959,51 @@ function generateUserFinancialPortfolioData(
 
     /* ---- Bank Accounts ---- */
 
-    data[user + "BankAccounts"] = mapArray(
-      allQuestions?.familyBank?.[user],
-      (item) => ({
-        ...item,
-        Institution: bankMaps.banks[item.Institution],
-      }),
-    );
+    data[user + "BankAccounts"] =
+      CRState?.familyBank == "Yes"
+        ? mapArray(allQuestions?.familyBank?.[user], (item) => ({
+            ...item,
+            Institution: bankMaps.banks[item.Institution],
+          }))
+        : [];
 
-    data[user + "TermDeposits"] = mapArray(
-      allQuestions?.familyTermDeposit?.[user],
-      (item) => ({
-        ...item,
-        Institution: bankMaps.banks[item.Institution],
-      }),
-    );
+    data[user + "TermDeposits"] =
+      CRState?.familyTermDeposit == "Yes"
+        ? mapArray(allQuestions?.familyTermDeposit?.[user], (item) => ({
+            ...item,
+            Institution: bankMaps.banks[item.Institution],
+          }))
+        : [];
 
     data[user + "AustralianShare"] =
-      allQuestions?.familyAustralianShare?.[user] || [];
+      CRState?.familyAustralianShare == "Yes"
+        ? allQuestions?.familyAustralianShare?.[user] || []
+        : [];
 
     /* ---- Platform Investments ---- */
 
-    data[user + "PlatFromInvestment"] = mapArray(
-      allQuestions?.familyMangedFunds?.[user],
-      (item) => ({
-        ...item,
-        platformName: resolvePlatformName(
-          bankMaps.platforms,
-          item.platformName,
-        ),
-        owner: personalDetails?.client?.["clientPreferredName"] || "",
-        portfolioValueArray: mapArray(item.portfolioValueArray, (element) => ({
-          ...element,
-          investmentOption: resolveInvestmentOption(
-            bankDetailObj.InvestmentPlatforms,
-            item.platformName,
-            element.investmentOption,
-          ),
-        })),
-      }),
-    );
+    data[user + "PlatFromInvestment"] =
+      CRState?.familyMangedFunds == "Yes"
+        ? mapArray(allQuestions?.familyMangedFunds?.[user], (item) => ({
+            ...item,
+            platformName: resolvePlatformName(
+              bankMaps.platforms,
+              item.platformName,
+            ),
+            owner: personalDetails?.client?.["clientPreferredName"] || "",
+            portfolioValueArray: mapArray(
+              item.portfolioValueArray,
+              (element) => ({
+                ...element,
+                investmentOption: resolveInvestmentOption(
+                  bankDetailObj.InvestmentPlatforms,
+                  item.platformName,
+                  element.investmentOption,
+                ),
+              }),
+            ),
+          }))
+        : [];
 
     return data;
   }
@@ -995,232 +1012,248 @@ function generateUserFinancialPortfolioData(
 
   /* ---- Bank Accounts ---- */
 
-  data[user + "BankAccounts"] = mapArray(
-    allQuestions?.bankAccountFinance?.[user],
-    (item) => ({
-      ...item,
-      Institution: bankMaps.banks[item.Institution],
-    }),
-  );
+  data[user + "BankAccounts"] =
+    CRState?.bankAccountFinance == "Yes"
+      ? mapArray(allQuestions?.bankAccountFinance?.[user], (item) => ({
+          ...item,
+          Institution: bankMaps.banks[item.Institution],
+        }))
+      : [];
 
-  data[user + "TermDeposits"] = mapArray(
-    allQuestions?.termDepositsFinance?.[user],
-    (item) => ({
-      ...item,
-      Institution: bankMaps.banks[item.Institution],
-    }),
-  );
+  data[user + "TermDeposits"] =
+    CRState?.bankAccountFinance == "Yes"
+      ? mapArray(allQuestions?.termDepositsFinance?.[user], (item) => ({
+          ...item,
+          Institution: bankMaps.banks[item.Institution],
+        }))
+      : [];
 
   data[user + "AustralianShare"] =
-    allQuestions?.australianShareMarket?.[user] || [];
+    CRState?.australianShareMarket == "Yes"
+      ? allQuestions?.australianShareMarket?.[user] || []
+      : [];
 
   /* ---- Platform Investments ---- */
 
-  data[user + "PlatFromInvestment"] = mapArray(
-    allQuestions?.managedFund?.[user],
-    (item) => ({
-      ...item,
-      platformName: resolvePlatformName(bankMaps.platforms, item.platformName),
-      owner: ownerName,
-      portfolioValueArray: mapArray(item.portfolioValueArray, (element) => ({
-        ...element,
-        investmentOption: resolveInvestmentOption(
-          bankDetailObj.InvestmentPlatforms,
-          item.platformName,
-          element.investmentOption,
-        ),
-      })),
-    }),
-  );
+  data[user + "PlatFromInvestment"] =
+    CRState?.managedFund == "Yes"
+      ? mapArray(allQuestions?.managedFund?.[user], (item) => ({
+          ...item,
+          platformName: resolvePlatformName(
+            bankMaps.platforms,
+            item.platformName,
+          ),
+          owner: ownerName,
+          portfolioValueArray: mapArray(
+            item.portfolioValueArray,
+            (element) => ({
+              ...element,
+              investmentOption: resolveInvestmentOption(
+                bankDetailObj.InvestmentPlatforms,
+                item.platformName,
+                element.investmentOption,
+              ),
+            }),
+          ),
+        }))
+      : [];
 
   /* ---- Investment Bonds ---- */
 
-  data[user + "InvestmentBond"] = mapArray(
-    allQuestions?.investmentBondFinance?.[user],
-    (item) => ({
-      ...item,
-      platformName: resolvePlatformName(bankMaps.bonds, item.platformName),
-      owner: ownerName,
-      portfolioValueArray: mapArray(item.portfolioValueArray, (element) => ({
-        ...element,
-        investmentOption: resolveInvestmentOption(
-          bankDetailObj.InvestmentBonds,
-          item.platformName,
-          element.investmentOption,
-        ),
-      })),
-    }),
-  );
+  data[user + "InvestmentBond"] =
+    CRState?.investmentBondFinance == "Yes"
+      ? mapArray(allQuestions?.investmentBondFinance?.[user], (item) => ({
+          ...item,
+          platformName: resolvePlatformName(bankMaps.bonds, item.platformName),
+          owner: ownerName,
+          portfolioValueArray: mapArray(
+            item.portfolioValueArray,
+            (element) => ({
+              ...element,
+              investmentOption: resolveInvestmentOption(
+                bankDetailObj.InvestmentBonds,
+                item.platformName,
+                element.investmentOption,
+              ),
+            }),
+          ),
+        }))
+      : [];
 
   if (user !== "joint") {
     /* ---- Super Funds ---- */
 
-    data[user + "SuperFund"] = mapArray(
-      allQuestions?.superAnnuationIssues?.[user],
-      (item) => {
-        const details = item?.balanceBenefitDetails || {};
-        const groupInsuranceDetails = item?.groupInsuranceDetails || {};
+    data[user + "SuperFund"] =
+      CRState?.superAnnuationIssues == "Yes"
+        ? mapArray(allQuestions?.superAnnuationIssues?.[user], (item) => {
+            const details = item?.balanceBenefitDetails || {};
+            const groupInsuranceDetails = item?.groupInsuranceDetails || {};
 
-        return {
-          platformName: resolvePlatformName(
-            bankMaps.superFunds,
-            item.platformName,
-          ),
-          memberName: ownerName,
-          memberNumber: item?.memberNumber || "",
-          fundType: details.fundType || "",
-          commencementDate:
-            convertDateAUWithDayJS(details.commencementDate) || "",
-          eligibleServiceDate:
-            convertDateAUWithDayJS(details.eligibleServiceDate) || "",
-          portfolioValue: details.portfolioValue || "",
-          taxFreeComponent: details.taxFreeComponent || "",
-          taxableComponent: details.taxableComponent || "",
-          preservedAmount: details.preservedAmount || "",
-          restrictedNonPreserved: details.restrictedNonPreserved || "",
-          unrestrictedNonPreserved: details.unrestrictedNonPreserved || "",
-          portfolioValueArray: mapArray(
-            item?.balanceBenefitDetails?.portfolioValueArray,
-            (element) => ({
-              ...element,
-              investmentOption: resolveInvestmentOption(
-                bankDetailObj.SuperannuationFunds,
+            return {
+              platformName: resolvePlatformName(
+                bankMaps.superFunds,
                 item.platformName,
-                element.investmentOption,
               ),
-            }),
-          ),
-          annualAdvice: item?.annualAdvice || "",
-          contributionsArrayNonConcessional:
-            item?.contributionsArray && item?.contributionsArray.length > 0
-              ? item?.contributionsArray
-                  ?.map((e, i) => {
-                    return {
-                      year: item?.contributionsStartYear + i + 1,
-                      nonConcessionalContributions:
-                        e.nonConcessionalContributions || "$0",
-                    };
-                  })
-                  .slice(-3)
-              : [],
+              memberName: ownerName,
+              memberNumber: item?.memberNumber || "",
+              fundType: details.fundType || "",
+              commencementDate:
+                convertDateAUWithDayJS(details.commencementDate) || "",
+              eligibleServiceDate:
+                convertDateAUWithDayJS(details.eligibleServiceDate) || "",
+              portfolioValue: details.portfolioValue || "",
+              taxFreeComponent: details.taxFreeComponent || "",
+              taxableComponent: details.taxableComponent || "",
+              preservedAmount: details.preservedAmount || "",
+              restrictedNonPreserved: details.restrictedNonPreserved || "",
+              unrestrictedNonPreserved: details.unrestrictedNonPreserved || "",
+              portfolioValueArray: mapArray(
+                item?.balanceBenefitDetails?.portfolioValueArray,
+                (element) => ({
+                  ...element,
+                  investmentOption: resolveInvestmentOption(
+                    bankDetailObj.SuperannuationFunds,
+                    item.platformName,
+                    element.investmentOption,
+                  ),
+                }),
+              ),
+              annualAdvice: item?.annualAdvice || "",
+              contributionsArrayNonConcessional:
+                item?.contributionsArray && item?.contributionsArray.length > 0
+                  ? item?.contributionsArray
+                      ?.map((e, i) => {
+                        return {
+                          year: item?.contributionsStartYear + i + 1,
+                          nonConcessionalContributions:
+                            e.nonConcessionalContributions || "$0",
+                        };
+                      })
+                      .slice(-3)
+                  : [],
 
-          contributionsArrayConcessional:
-            item?.contributionsArray && item?.contributionsArray.length > 0
-              ? item?.contributionsArray
-                  ?.map((e, i) => {
-                    return {
-                      year: item?.contributionsStartYear + i + 1,
-                      totalConcessional: e.totalConcessional || "$0",
-                    };
-                  })
-                  .slice(-5)
-              : [],
-          coverType: groupInsuranceDetails?.coverType || "",
-          coverType2: groupInsuranceDetails?.coverType2 || "",
-          lifeCover: groupInsuranceDetails?.lifeCover || "",
-          TPDCover: groupInsuranceDetails?.TPDCover || "",
-          monthlyIncome: groupInsuranceDetails?.monthlyIncome || "",
-          waitingPeriod: groupInsuranceDetails?.waitingPeriod || "",
-          BenefitPeriod: groupInsuranceDetails?.BenefitPeriod || "",
-          TotalInsuranceCost: calculateInsuranceTotal(groupInsuranceDetails),
-          nominationType:
-            item?.nominatedBeneficiariesDetails?.nominationType || "",
-          nominatedBeneficiariesArray: mapBeneficiaries(item),
-        };
-      },
-    );
+              contributionsArrayConcessional:
+                item?.contributionsArray && item?.contributionsArray.length > 0
+                  ? item?.contributionsArray
+                      ?.map((e, i) => {
+                        return {
+                          year: item?.contributionsStartYear + i + 1,
+                          totalConcessional: e.totalConcessional || "$0",
+                        };
+                      })
+                      .slice(-5)
+                  : [],
+              coverType: groupInsuranceDetails?.coverType || "",
+              coverType2: groupInsuranceDetails?.coverType2 || "",
+              lifeCover: groupInsuranceDetails?.lifeCover || "",
+              TPDCover: groupInsuranceDetails?.TPDCover || "",
+              monthlyIncome: groupInsuranceDetails?.monthlyIncome || "",
+              waitingPeriod: groupInsuranceDetails?.waitingPeriod || "",
+              BenefitPeriod: groupInsuranceDetails?.BenefitPeriod || "",
+              TotalInsuranceCost: calculateInsuranceTotal(
+                groupInsuranceDetails,
+              ),
+              nominationType:
+                item?.nominatedBeneficiariesDetails?.nominationType || "",
+              nominatedBeneficiariesArray: mapBeneficiaries(item),
+            };
+          })
+        : [];
 
     /* ---- Account Based Pensions ---- */
 
-    data[user + "AccountBasedPensions"] = mapArray(
-      allQuestions?.accountBasedPensionIssues?.[user],
-      (item) => {
-        const details = item?.balanceBenefitDetails || {};
+    data[user + "AccountBasedPensions"] =
+      CRState?.accountBasedPensionIssues == "Yes"
+        ? mapArray(allQuestions?.accountBasedPensionIssues?.[user], (item) => {
+            const details = item?.balanceBenefitDetails || {};
 
-        return {
-          platformName: resolvePlatformName(
-            bankMaps.pensions,
-            item.platformName,
-          ),
-          memberName: ownerName,
-          memberNumber: item?.memberNumber || "",
-          fundType: details.fundType || "",
-          commencementDate:
-            convertDateAUWithDayJS(details.commencementDate) || "",
-          eligibleServiceDate:
-            convertDateAUWithDayJS(details.eligibleServiceDate) || "",
-          portfolioValue: details?.portfolioValue || "",
-          taxFreeComponent: details?.taxFreeComponent || "",
-          taxableComponent: details?.taxableComponent || "",
-          restrictedNonPreserved: details?.restrictedNonPreserved || "",
-          unrestrictedNonPreserved: details?.unrestrictedNonPreserved || "",
-          preservedAmount: details?.preservedAmount || "",
-          purchasePrice: details?.purchasePrice || "",
-          pensionPayment: item?.pensionPayment || "",
-          annualAdvice: item?.annualAdvice || "",
-          portfolioValueArray: mapArray(
-            item?.balanceBenefitDetails?.portfolioValueArray,
-            (element) => ({
-              ...element,
-              investmentOption: resolveInvestmentOption(
-                bankDetailObj.AccountBasedPensions,
+            return {
+              platformName: resolvePlatformName(
+                bankMaps.pensions,
                 item.platformName,
-                element.investmentOption,
               ),
-            }),
-          ),
-          nominationType:
-            item?.nominatedBeneficiariesDetails?.nominationType || "",
-          nominatedBeneficiariesArray: mapBeneficiaries(item),
-        };
-      },
-    );
+              memberName: ownerName,
+              memberNumber: item?.memberNumber || "",
+              fundType: details.fundType || "",
+              commencementDate:
+                convertDateAUWithDayJS(details.commencementDate) || "",
+              eligibleServiceDate:
+                convertDateAUWithDayJS(details.eligibleServiceDate) || "",
+              portfolioValue: details?.portfolioValue || "",
+              taxFreeComponent: details?.taxFreeComponent || "",
+              taxableComponent: details?.taxableComponent || "",
+              restrictedNonPreserved: details?.restrictedNonPreserved || "",
+              unrestrictedNonPreserved: details?.unrestrictedNonPreserved || "",
+              preservedAmount: details?.preservedAmount || "",
+              purchasePrice: details?.purchasePrice || "",
+              pensionPayment: item?.pensionPayment || "",
+              annualAdvice: item?.annualAdvice || "",
+              portfolioValueArray: mapArray(
+                item?.balanceBenefitDetails?.portfolioValueArray,
+                (element) => ({
+                  ...element,
+                  investmentOption: resolveInvestmentOption(
+                    bankDetailObj.AccountBasedPensions,
+                    item.platformName,
+                    element.investmentOption,
+                  ),
+                }),
+              ),
+              nominationType:
+                item?.nominatedBeneficiariesDetails?.nominationType || "",
+              nominatedBeneficiariesArray: mapBeneficiaries(item),
+            };
+          })
+        : [];
 
     /* ---- Annuities ---- */
 
-    data[user + "Annuities"] = mapArray(
-      allQuestions?.annuitiesIssues?.[user],
-      (item) => ({
-        productProvider: resolvePlatformName(
-          bankMaps.annuities,
-          item.productProvider,
-        ),
-        memberName: ownerName,
-        accountNumber: item?.accountNumber || "",
-        sourceFunds: item?.sourceFunds || "",
-        annuityType: item?.annuityType || "",
-        term: item?.term || "",
-        yearsMaturity: item?.yearsMaturity || "",
-        originalInvestmentAmount: item?.originalInvestmentAmount || "",
-        returnCapitalValue: item?.returnCapitalValue || "",
-        annualAnnuityPayment: item?.annualAnnuityPayment || "",
-        annualAdvice: item?.annualAdvice || "",
-        nominationType:
-          item?.nominatedBeneficiariesDetails?.nominationType || "",
-        nominatedBeneficiariesArray: mapBeneficiaries(item),
-      }),
-    );
+    data[user + "Annuities"] =
+      CRState?.annuitiesIssues == "Yes"
+        ? mapArray(allQuestions?.annuitiesIssues?.[user], (item) => ({
+            productProvider: resolvePlatformName(
+              bankMaps.annuities,
+              item.productProvider,
+            ),
+            memberName: ownerName,
+            accountNumber: item?.accountNumber || "",
+            sourceFunds: item?.sourceFunds || "",
+            annuityType: item?.annuityType || "",
+            term: item?.term || "",
+            yearsMaturity: item?.yearsMaturity || "",
+            originalInvestmentAmount: item?.originalInvestmentAmount || "",
+            returnCapitalValue: item?.returnCapitalValue || "",
+            annualAnnuityPayment: item?.annualAnnuityPayment || "",
+            annualAdvice: item?.annualAdvice || "",
+            nominationType:
+              item?.nominatedBeneficiariesDetails?.nominationType || "",
+            nominatedBeneficiariesArray: mapBeneficiaries(item),
+          }))
+        : [];
 
     /* ---- TRADING COMPANY ---- */
 
-    data[user + "TradingCompany"] = mapArray(
-      allQuestions?.BusinessAsCompanyStructure?.[user],
-      (item) => ({
-        ...item,
-        owner: ownerName,
-      }),
-    );
+    data[user + "TradingCompany"] =
+      CRState?.BusinessAsCompanyStructure == "Yes"
+        ? mapArray(
+            allQuestions?.BusinessAsCompanyStructure?.[user],
+            (item) => ({
+              ...item,
+              owner: ownerName,
+            }),
+          )
+        : [];
 
     /* ---- BUSINESS TRUST ---- */
 
-    data[user + "BusinessTrust"] = mapArray(
-      allQuestions?.BusinessAsTrusts?.[user],
-      (item) => ({
-        ...item,
-        owner: ownerName,
-        isTrusteeTypeCorporate: item?.trusteeType === "Corporate",
-      }),
-    );
+    data[user + "BusinessTrust"] =
+      CRState?.BusinessAsTrusts == "Yes"
+        ? mapArray(allQuestions?.BusinessAsTrusts?.[user], (item) => ({
+            ...item,
+            owner: ownerName,
+            isTrusteeTypeCorporate: item?.trusteeType === "Corporate",
+          }))
+        : [];
   }
 
   return data;
@@ -1322,7 +1355,7 @@ function calculateSuperAndSMSFSums({
   return payload;
 }
 
-function buildLifeTPDTraumaArray(policies = [], providerMap = {}) {
+function buildLifeTPDTraumaArray(policies = [], providerMap = {}, owner) {
   if (!Array.isArray(policies) || policies.length === 0) return [];
 
   const chunkSize = 4;
@@ -1350,7 +1383,7 @@ function buildLifeTPDTraumaArray(policies = [], providerMap = {}) {
       )
         ? RenderName(policy?.Owner) || ""
         : policy?.Owner;
-      obj[`lifeInsured${position}`] = policy?.lifeInsured || "";
+      obj[`lifeInsured${position}`] = RenderName(owner) || "";
       obj[`provider${position}`] =
         providerMap?.[policy?.provider] || policy?.provider || "";
 
@@ -1557,7 +1590,7 @@ function buildSMSFAssetArray(array = [], institutionMap = {}) {
   }));
 }
 
-const GeneraDocument = async (id) => {
+const GeneraDocument = async (id, FileName = "template.docx") => {
   try {
     console.log("Document generation started for ID:", id);
 
@@ -1673,6 +1706,8 @@ const GeneraDocument = async (id) => {
           )}`.trim()
         : "Guest";
 
+    let adviserEmail = LoggedInUser.email;
+
     const expenseTypes = [
       { name: "Rent", id: "houseHoldRent" },
       { name: "Gas", id: "houseHoldGas" },
@@ -1719,6 +1754,7 @@ const GeneraDocument = async (id) => {
     let payload = {
       clientName: personalDetails?.client?.clientGivenName || "",
       adviserName: adviserName || "",
+      adviserEmail: adviserEmail || "",
 
       downloadDate: new Date().toLocaleDateString("en-AU", {
         day: "2-digit",
@@ -1735,7 +1771,9 @@ const GeneraDocument = async (id) => {
             goalsAndObjective?.[item.key]?.scopeOfAdvice ||
             item?.scopeOfAdvice ||
             "",
-          description: goalsAndObjective?.[item.key]?.description || "",
+          description: RemoveSpan(
+            goalsAndObjective?.[item.key]?.description || "",
+          ),
           when: goalsAndObjective?.[item.key]?.when || item?.whenScopeIs || "",
           estimatedValue: goalsAndObjective?.[item.key]?.estimatedValue || "",
         })),
@@ -1815,6 +1853,7 @@ const GeneraDocument = async (id) => {
             allQuestions?.personalInsurance?.client?.PersonalInsurance) ||
             [],
           toIdNameMap(bankDetailObj?.PersonalInsurances || []),
+          "client",
         ),
       ],
 
@@ -1911,6 +1950,7 @@ const GeneraDocument = async (id) => {
                 allQuestions?.personalInsurance?.partner?.PersonalInsurance ||
                   [],
                 toIdNameMap(bankDetailObj?.PersonalInsurances || []),
+                "partner",
               ),
             ],
           }
@@ -2385,6 +2425,18 @@ const GeneraDocument = async (id) => {
         ]),
       ),
 
+      ...Object.fromEntries(
+        Array.from({ length: 5 }, (_, i) => [
+          `SMSFInvestmentAddress${i + 1}`,
+          (allQuestions?.SMSFInvestmentProperties.SMSF?.[i]?.PropertyAddress ||
+            "") +
+            " (" +
+            (allQuestions?.SMSFInvestmentProperties.SMSF?.[i]?.postcodeSuburb ||
+              "") +
+            ")",
+        ]),
+      ),
+
       SMSFInvestmentloan: allQuestions?.SMSFInvestmentLoan?.SMSFTotal || "$0",
 
       ...buildSMSFObject(
@@ -2454,6 +2506,18 @@ const GeneraDocument = async (id) => {
         ]),
       ),
 
+      ...Object.fromEntries(
+        Array.from({ length: 5 }, (_, i) => [
+          `FamilyTrustInvestmentAddress${i + 1}`,
+          (allQuestions?.familyInvestmentProperties.trust?.[i]
+            ?.PropertyAddress || "") +
+            " (" +
+            (allQuestions?.familyInvestmentProperties.trust?.[i]
+              ?.postcodeSuburb || "") +
+            ")",
+        ]),
+      ),
+
       FamilyTrustInvestmentloan:
         allQuestions?.familyInvestmentHomeLoan?.trust?.loanBalance || "",
 
@@ -2463,6 +2527,9 @@ const GeneraDocument = async (id) => {
         personalDetails,
         "trust",
       ),
+
+      // PageBreak: `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`, // this is for full new Page
+      PageBreak: `<w:br w:type="page"/>`, // this is simple Page Break
     };
 
     const sumByPrefix = (prefix) => {
@@ -2928,7 +2995,7 @@ const GeneraDocument = async (id) => {
 
     await generateDocumentFromTemplate(
       payload,
-      "template.docx",
+      FileName,
       `Adviser Simplicity Fact Find of ${personalDetails?.client?.clientPreferredName || "Client"}.docx`,
     );
   } catch (error) {

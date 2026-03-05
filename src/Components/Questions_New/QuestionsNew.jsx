@@ -23,9 +23,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
 import { content } from "../../Content/Content";
 import QuestionCardsNew from "../Questions/FinancialInvestments/QuestionCardsNew";
-import { Grid } from "antd";
+import { Button, Grid, Spin } from "antd";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import { FaCaretRight } from "react-icons/fa";
+import { FaCaretRight, FaDownload } from "react-icons/fa";
+import { GeneraDocument } from "../Assets/Api/GenerateDocument";
+import { MdLocalDining } from "react-icons/md";
 const { useBreakpoint } = Grid;
 
 const QuestionsNew = (props) => {
@@ -35,6 +37,8 @@ const QuestionsNew = (props) => {
   let CRObject = useRecoilValue(CRState);
   let SelectedClient = useRecoilValue(SelectedClientDetails);
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
+
+  const [downLoadLeading2, setDownLoadLeading2] = useState(false);
 
   let [flagState, setFlagState] = useState(false);
   let [flagState2, setFlagState2] = useState(true);
@@ -62,7 +66,6 @@ const QuestionsNew = (props) => {
   let selectQuestionSet = async (path) => {
     let cLocation = path;
 
-
     setQuestionChange(cLocation);
 
     // console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
@@ -81,7 +84,7 @@ const QuestionsNew = (props) => {
   const FetchQuestions = async () => {
     try {
       const res = await GetAxios(
-        `${DefaultUrl}/api/questions/${personalDetailObj._id}`
+        `${DefaultUrl}/api/questions/${personalDetailObj._id}`,
       );
       if (res) {
         setCRObject(res);
@@ -94,7 +97,7 @@ const QuestionsNew = (props) => {
   const fetchDataAllInOne = async () => {
     try {
       const res = await GetAxios(
-        `${DefaultUrl}/api/dataOfAllSection/${personalDetailObj._id}`
+        `${DefaultUrl}/api/dataOfAllSection/${personalDetailObj._id}`,
       );
       // console.log(JSON.stringify(res), ":res of get all inner Question Data")
       if (res) {
@@ -110,7 +113,7 @@ const QuestionsNew = (props) => {
   const HandleSubmit = () => {
     // Find the current item index based on the QuestionChange state
     const currentIndex = content.itemsOpt.findIndex(
-      (item) => item.route === `${QuestionChange}`
+      (item) => item.route === `${QuestionChange}`,
     );
     // alert("Current Index :" + currentIndex);
     // Find the next valid route by incrementing the index and checking the condition
@@ -145,7 +148,7 @@ const QuestionsNew = (props) => {
 
     // Find the current item index based on the QuestionChange state
     const currentIndex = content.itemsOpt.findIndex(
-      (item) => item.route === `${QuestionChange}`
+      (item) => item.route === `${QuestionChange}`,
     );
 
     // Find the previous valid route by decrementing the index and checking the condition
@@ -265,9 +268,31 @@ const QuestionsNew = (props) => {
                 >
                   Back
                 </button>
+
+                {location.pathname == "/user/financial-investments" && (
+                  <button
+                    className="float-center btn  btn-outline-secondary me-3"
+                    style={{ width: screens.xxl ? "15%" : "20%" }}
+                    onClick={async () => {
+                      try {
+                        setDownLoadLeading2(true);
+                        await GeneraDocument(SelectedClient._id);
+                      } catch (err) {
+                        console.error("Document Download Error:", err);
+                      } finally {
+                        setDownLoadLeading2(false);
+                      }
+                    }}
+                    disabled={downLoadLeading2}
+                  >
+                    {downLoadLeading2 ? <Spin /> : <FaDownload />} Download
+                    Authorities
+                  </button>
+                )}
+
                 <button
                   onClick={HandleSubmit}
-                  className="float-center btn   bgColor modalBtn"
+                  className="float-center btn bgColor modalBtn"
                   style={{ width: screens.xxl ? "15%" : "20%" }}
                 >
                   Next <FaCaretRight />

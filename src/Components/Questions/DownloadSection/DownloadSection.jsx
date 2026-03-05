@@ -8,6 +8,7 @@ import { GeneraDocument } from "../../Assets/Api/GenerateDocument";
 const { useBreakpoint } = Grid;
 const DownloadSection = () => {
   const [downLoadLeading, setDownLoadLeading] = useState(false);
+  const [downLoadLeading2, setDownLoadLeading2] = useState(false);
   const [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
     SelectedClientDetails,
   );
@@ -30,7 +31,7 @@ const DownloadSection = () => {
       <Card
         bordered={false}
         style={{
-          maxWidth: 420,
+          maxWidth: 520,
           width: "100%",
           textAlign: "center",
           borderRadius: 16,
@@ -59,31 +60,62 @@ const DownloadSection = () => {
           Click the button below to download your document securely to your
           device.
         </p>
+        <div className="d-flex justify-content-center align-items-center gap-2">
+          {/* CTA */}
+          <Button
+            type="primary"
+            size="large"
+            icon={<FaDownload />}
+            style={{
+              borderRadius: 8,
+              paddingInline: 24,
+            }}
+            onClick={async () => {
+              try {
+                setDownLoadLeading(true);
+                await GeneraDocument(selectedClientDetails._id);
+              } catch (err) {
+                console.error("Document Download Error:", err);
+              } finally {
+                setDownLoadLeading(false);
+              }
+            }}
+            disabled={downLoadLeading}
+            loading={downLoadLeading}
+          >
+            Download Fact Find
+          </Button>
 
-        {/* CTA */}
-        <Button
-          type="primary"
-          size="large"
-          icon={<FaDownload />}
-          style={{
-            borderRadius: 8,
-            paddingInline: 24,
-          }}
-          onClick={async () => {
-            try {
-              setDownLoadLeading(true);
-              await GeneraDocument(selectedClientDetails._id);
-            } catch (err) {
-              console.error("Document Download Error:", err);
-            } finally {
-              setDownLoadLeading(false);
-            }
-          }}
-          disabled={downLoadLeading}
-          loading={downLoadLeading}
-        >
-          Download Document
-        </Button>
+          {/* CTA */}
+          <Button
+            htmlType="button"
+            color="default"
+            variant="filled"
+            size="large"
+            icon={<FaDownload />}
+            style={{
+              borderRadius: 8,
+              paddingInline: 24,
+            }}
+            onClick={async () => {
+              try {
+                setDownLoadLeading2(true);
+                await GeneraDocument(
+                  selectedClientDetails._id,
+                  "template2.docx",
+                );
+              } catch (err) {
+                console.error("Document Download Error:", err);
+              } finally {
+                setDownLoadLeading2(false);
+              }
+            }}
+            disabled={downLoadLeading2}
+            loading={downLoadLeading2}
+          >
+            Download Authorities
+          </Button>
+        </div>
       </Card>
     </div>
   );
