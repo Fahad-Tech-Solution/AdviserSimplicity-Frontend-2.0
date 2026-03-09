@@ -685,22 +685,38 @@ function Summary_of_Networth(allQuestions, CRState, personalDetails, user) {
   /* -------------------- Investment Assets -------------------- */
 
   const investmentStaticKeys = {
-    BankAccountCurrentBalance:CRState?.bankAccountFinance=="Yes"?
-      allQuestions?.bankAccountFinance?.[user + "CurrentBalance"]:"$0",
-    TermDepositsCurrentBalance:CRState?.termDepositsFinance=="Yes"?
-      allQuestions?.termDepositsFinance?.[user + "CurrentBalance"]:"$0",
-    AustralianSharesCurrentBalance:CRState?.australianShareMarket=="Yes"?
-      allQuestions?.australianShareMarket?.[user + "CurrentBalance"]:"$0",
-    PlatformInvestmentsCurrentBalance:CRState?.managedFund=="Yes"?
-      allQuestions?.managedFund?.[user + "CurrentBalance"]:"$0",
-    InvestmentBondsCurrentBalance:CRState?.investmentBondFinance=="Yes"?
-      allQuestions?.investmentBondFinance?.[user + "CurrentBalance"]:"$0",
-    SuperannuationCurrentBalance:CRState?.superAnnuationIssues=="Yes"?
-      allQuestions?.superAnnuationIssues?.[user + "CurrentBalance"]:"$0",
+    BankAccountCurrentBalance:
+      CRState?.bankAccountFinance == "Yes"
+        ? allQuestions?.bankAccountFinance?.[user + "CurrentBalance"]
+        : "$0",
+    TermDepositsCurrentBalance:
+      CRState?.termDepositsFinance == "Yes"
+        ? allQuestions?.termDepositsFinance?.[user + "CurrentBalance"]
+        : "$0",
+    AustralianSharesCurrentBalance:
+      CRState?.australianShareMarket == "Yes"
+        ? allQuestions?.australianShareMarket?.[user + "CurrentBalance"]
+        : "$0",
+    PlatformInvestmentsCurrentBalance:
+      CRState?.managedFund == "Yes"
+        ? allQuestions?.managedFund?.[user + "CurrentBalance"]
+        : "$0",
+    InvestmentBondsCurrentBalance:
+      CRState?.investmentBondFinance == "Yes"
+        ? allQuestions?.investmentBondFinance?.[user + "CurrentBalance"]
+        : "$0",
+    SuperannuationCurrentBalance:
+      CRState?.superAnnuationIssues == "Yes"
+        ? allQuestions?.superAnnuationIssues?.[user + "CurrentBalance"]
+        : "$0",
     AccountBasedPensionsCurrentBalance:
-      CRState?.accountBasedPensionIssues=="Yes"? allQuestions?.accountBasedPensionIssues?.[user + "CurrentBalance"]:"$0",
-    AnnuitiesCurrentBalance:CRState?.annuitiesIssues=="Yes"?
-      allQuestions?.annuitiesIssues?.[user + "CurrentBalance"]:"$0",
+      CRState?.accountBasedPensionIssues == "Yes"
+        ? allQuestions?.accountBasedPensionIssues?.[user + "CurrentBalance"]
+        : "$0",
+    AnnuitiesCurrentBalance:
+      CRState?.annuitiesIssues == "Yes"
+        ? allQuestions?.annuitiesIssues?.[user + "CurrentBalance"]
+        : "$0",
   };
 
   Object.entries(investmentStaticKeys).forEach(([key, value]) => {
@@ -2460,7 +2476,7 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       FamilyTrustPlaceOfBusiness:
         allQuestions?.familyDetails?.familyTrustOwner?.placeOfBusiness || "",
       FamilyTrustEstablishmentDate:
-        allQuestions?.familyDetails?.familyTrustOwner?.establishmentDate || "",
+        convertDateAUWithDayJS(allQuestions?.familyDetails?.familyTrustOwner?.establishmentDate) || "",
       FamilyTrustTrusteeType:
         allQuestions?.familyDetails?.familyTrustOwner?.trusteeType || "",
       FamilyTrustDirectorNamesList:
@@ -2816,7 +2832,6 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
     );
 
     // less tax estimation
-
     let SalarySacrificeClient = parseMoney(
       payload.clientSalarySacrificeContributions || "$0",
     );
@@ -2825,7 +2840,6 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
     );
 
     //total Property Expance
-    // since expance and property ownership is on property level we need to calculate total expance on each property and then sum it up to get total expance for client and partner to calculate that we will multiply ownership with expance
 
     let clientExpances = [];
     allQuestions?.investmentPropertyDetails.client &&
@@ -2855,6 +2869,8 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
     let clientTotalDeductions = clientExpances + SalarySacrificeClient;
     let partnerTotalDeductions = partnerExpances + SalarySacrificePartner;
 
+    console.log(SalarySacrificeClient, clientExpances);
+
     // now we calculate client and partner payed intrust on property loan
 
     let clientInterest = [];
@@ -2862,27 +2878,30 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       allQuestions?.investmentPropertyDetails.client.map((item, index) => {
         clientInterest.push(
           parseMoney(item?.propertyLoanDetails || "$0") *
-            parseMoney(
+            (parseMoney(
               item?.propertyLoanDetailsArray[0]?.InterestRate || "0%",
-            ) *
+            )/100) *
             (parseMoney(item?.clientOwnership || "0%") / 100),
         );
       });
+
 
     let partnerInterest = [];
     allQuestions?.investmentPropertyDetails.client &&
       allQuestions?.investmentPropertyDetails.client.map((item, index) => {
         partnerInterest.push(
           parseMoney(item?.propertyLoanDetails || "$0") *
-            parseMoney(
+            (parseMoney(
               item?.propertyLoanDetailsArray[0]?.InterestRate || "0%",
-            ) *
+            )/100) *
             (parseMoney(item?.partnerOwnership || "0%") / 100),
         );
       });
 
     clientInterest = clientInterest.reduce((a, b) => a + b, 0);
     partnerInterest = partnerInterest.reduce((a, b) => a + b, 0);
+
+
 
     //now adding total interest payed with total Deductions to get total deductions for client and partner
     let totalDeductionsClient = clientTotalDeductions + clientInterest;
@@ -2893,6 +2912,7 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       parseMoney(payload.clientTotalIncome || "$0") - totalDeductionsClient;
     let PartnerNetTaxableIncome =
       parseMoney(payload.partnerTotalIncome || "$0") - totalDeductionsPartner;
+
 
     // the Tax Brackets in Australia
 
@@ -2921,16 +2941,8 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       return tax;
     };
 
-    // Calculate taxes for client and partner
-    // let clientTax = calculateTax(50000); // Example income for client
-    // console.log("Client Net Taxable Income:", ClientNetTaxableIncome);
-    // console.log("Partner Net Taxable Income:", PartnerNetTaxableIncome);
-
     let clientTax = calculateTax(ClientNetTaxableIncome);
     let partnerTax = calculateTax(PartnerNetTaxableIncome);
-
-    // console.log("Client Tax:", clientTax);
-    // console.log("Partner Tax:", partnerTax);
 
     // we need to add medical levy in this
     let medicarelavyMatric = [
@@ -2967,19 +2979,11 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
     let clientMedicareLevy = calculateMedicareLevy(ClientNetTaxableIncome);
     let partnerMedicareLevy = calculateMedicareLevy(PartnerNetTaxableIncome);
 
-    // console.log("Client Medicare Levy:", clientMedicareLevy);
-    // console.log("Partner Medicare Levy:", partnerMedicareLevy);
-
     let LessEstimatedTax = toCommaAndDollar(
       clientTax + partnerTax + clientMedicareLevy + partnerMedicareLevy,
     );
 
-    // console.log("clientTax:", clientTax);
-    // console.log("partnerTax:", partnerTax);
-
     payload.clientLessEstimatedTax = LessEstimatedTax;
-
-    // console.log("payload.clientTotalIncome:", payload.clientTotalIncome);
 
     payload.clientTotalExpanse = toCommaAndDollar(
       parseMoney(payload.clientTotalExpanse || "$0") +
