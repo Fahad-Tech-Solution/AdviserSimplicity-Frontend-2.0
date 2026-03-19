@@ -31,20 +31,21 @@ import {
   SelectedClientDetails,
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { Image } from "react-bootstrap";
 import RiskProfileCards from "./RiskProfileCards";
 
 import "yup-phone";
 import * as Yup from "yup";
-import Notfound404 from "../Questions/svgs/Notfound404";
-import { ConfigProvider, notification, Spin } from "antd";
+import { Button, ConfigProvider, notification, Spin } from "antd";
 import DetectionMatrix from "./DetectionMatrix";
+import { GeneraDocumentRiskProfile } from "../Assets/Api/GenerateRiskProfileDoc";
+import { FaDownload } from "react-icons/fa";
 
 const RiskProfileNew = () => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let [riskQuestion, setRiskQuestion] = useRecoilState(RiskQuestion);
   let selectedClientDetails = useRecoilValue(SelectedClientDetails);
   let [riskGoalWarning, setRiskGoalWarning] = useRecoilState(RiskGoalWarning);
+  const [downLoadLeading, setDownLoadLeading] = useState(false);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
@@ -70,7 +71,7 @@ const RiskProfileNew = () => {
           "info",
           "topRight",
           "Info Notification",
-          "Please! select a user first"
+          "Please! select a user first",
         );
         Nav("/user/my-clients");
       }
@@ -80,7 +81,7 @@ const RiskProfileNew = () => {
   const GetRiskData = async () => {
     try {
       const res = await GetAxios(
-        `${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`
+        `${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`,
       );
 
       if (res && res._id) {
@@ -189,7 +190,7 @@ const RiskProfileNew = () => {
 
         const res = await PatchAxios(
           `${DefaultUrl}/api/riskProfile/Update`,
-          obj
+          obj,
         );
 
         if (res && res._id) {
@@ -199,7 +200,7 @@ const RiskProfileNew = () => {
             "success",
             "topRight",
             "Success Notification",
-            "Data of Risk Profile is Saved"
+            "Data of Risk Profile is Saved",
           );
           // Nav("/risk-profile/cards")
         } else {
@@ -208,7 +209,7 @@ const RiskProfileNew = () => {
             "error",
             "topRight",
             "Error Notification",
-            "Data of Risk Profile is not Saved Please! try again"
+            "Data of Risk Profile is not Saved Please! try again",
           );
         }
       }
@@ -356,7 +357,7 @@ const RiskProfileNew = () => {
         ? "/user/risk-profile/"
         : loc.pathname;
     const currentIndex = QuestionArray.findIndex(
-      (q) => "/user/risk-profile" + q.route === currentPath
+      (q) => "/user/risk-profile" + q.route === currentPath,
     );
 
     if (currentIndex >= 0 && currentIndex < QuestionArray.length) {
@@ -382,7 +383,7 @@ const RiskProfileNew = () => {
 
     // console.log(currentPath);
     const currentIndex = QuestionArray.findIndex(
-      (q) => "/user/risk-profile" + q.route === currentPath
+      (q) => "/user/risk-profile" + q.route === currentPath,
     );
 
     // console.log(currentIndex);
@@ -403,7 +404,7 @@ const RiskProfileNew = () => {
         : loc.pathname;
 
     const currentIndex = QuestionArray.findIndex(
-      (q) => "/user/risk-profile" + q.route === currentPath
+      (q) => "/user/risk-profile" + q.route === currentPath,
     );
 
     if (currentIndex < QuestionArray.length - 1) {
@@ -442,19 +443,19 @@ const RiskProfileNew = () => {
         setFieldValue("client.happyWithResult", data.client.happyWithResult);
         setFieldValue(
           "client.confirmRiskProfileCheck1",
-          data.client.confirmRiskProfileCheck1
+          data.client.confirmRiskProfileCheck1,
         );
         setFieldValue(
           "client.confirmRiskProfileCheck2",
-          data.client.confirmRiskProfileCheck2
+          data.client.confirmRiskProfileCheck2,
         );
         setFieldValue(
           "client.confirmRiskProfileCheck3",
-          data.client.confirmRiskProfileCheck3
+          data.client.confirmRiskProfileCheck3,
         );
         setFieldValue(
           "client.addNoteDescription",
-          data.client.addNoteDescription
+          data.client.addNoteDescription,
         );
       }
 
@@ -474,19 +475,19 @@ const RiskProfileNew = () => {
         setFieldValue("partner.happyWithResult", data.partner.happyWithResult);
         setFieldValue(
           "partner.confirmRiskProfileCheck1",
-          data.partner.confirmRiskProfileCheck1
+          data.partner.confirmRiskProfileCheck1,
         );
         setFieldValue(
           "partner.confirmRiskProfileCheck2",
-          data.partner.confirmRiskProfileCheck2
+          data.partner.confirmRiskProfileCheck2,
         );
         setFieldValue(
           "partner.confirmRiskProfileCheck3",
-          data.partner.confirmRiskProfileCheck3
+          data.partner.confirmRiskProfileCheck3,
         );
         setFieldValue(
           "partner.addNoteDescription",
-          data.partner.addNoteDescription
+          data.partner.addNoteDescription,
         );
       }
 
@@ -623,37 +624,6 @@ const RiskProfileNew = () => {
               <Form>
                 <div className="col-md-12">
                   <Routes>
-                    {/* <Route
-                    key={"404NotFund"}
-                    path="/404NotFound"
-                    element={
-                      <div style={{ marginTop: "-18%", padding: "0px 20%" }}>
-                        <Notfound404 />
-                        <p
-                          className="text-center"
-                          style={{ marginTop: "-15%" }}
-                        >
-                          Client Haven't filled the Risk Profile yet do you
-                          want to send him a link
-                        </p>
-                        <div
-                          className={
-                            "w-100 d-flex flex-row justify-content-center align-items-center"
-                          }
-                        >
-                          <div className={"w-50 border"}>
-                            <button
-                              type="button"
-                              className="float-center btn w-100  bgColor modalBtn"
-                              onClick={sendlink}
-                            >
-                              Send link
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    }
-                  /> */}
                     {QuestionArray.map((elem, index) => {
                       if (elem.key === "cardSet") {
                         return (
@@ -716,8 +686,8 @@ const RiskProfileNew = () => {
                       BackButton
                         ? "justify-content-between"
                         : mainBoard === false
-                        ? "justify-content-center"
-                        : "justify-content-end"
+                          ? "justify-content-center"
+                          : "justify-content-end"
                     } my-3`}
                   >
                     {BackButton && (
@@ -729,6 +699,34 @@ const RiskProfileNew = () => {
                         >
                           <FaArrowLeftLong /> Back
                         </button>
+                      </div>
+                    )}
+
+                    {loc.pathname == "/user/risk-profile/cards" && (
+                      <div className="col-md-3 d-flex justify-content-center align-items-center">
+                        <Button
+                          type="primary"
+                          size="large"
+                          icon={<FaDownload />}
+                          style={{
+                            borderRadius: 8,
+                            paddingInline: 24,
+                          }}
+                          onClick={async () => {
+                            try {
+                              setDownLoadLeading(true);
+                              await GeneraDocumentRiskProfile(values);
+                            } catch (err) {
+                              console.error("Document Download Error:", err);
+                            } finally {
+                              setDownLoadLeading(false);
+                            }
+                          }}
+                          disabled={downLoadLeading}
+                          loading={downLoadLeading}
+                        >
+                          Download Risk Profile
+                        </Button>
                       </div>
                     )}
 

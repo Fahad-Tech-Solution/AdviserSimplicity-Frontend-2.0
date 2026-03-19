@@ -11,6 +11,7 @@ import {
   PersonalDetailsData,
   QuestionDetail,
   BankDetail,
+  RiskQuestion
 } from "./Store";
 
 export const getJwtToken = () => getRecoil(LoggedInUserTokenJwt);
@@ -22,3 +23,4 @@ export const getDefaultUrl = () => getRecoil(defaultUrl);
 export const getLoggedInUserData = () => getRecoil(LoggedInUserData);
 export const getGQState = () => getRecoil(GQState);
 export const getBankDetail = () => getRecoil(BankDetail);
+export const getRiskQuestion = () => getRecoil(RiskQuestion);

@@ -5,25 +5,18 @@ import DownloadSVG from "../svgs/DownloadSVG";
 import { useRecoilState } from "recoil";
 import { SelectedClientDetails } from "../../../Store/Store";
 import { GeneraDocument } from "../../Assets/Api/GenerateDocument";
+import { GenerateFileNote } from "../../Assets/Api/GenerateFileNote";
 const { useBreakpoint } = Grid;
 const DownloadSection = () => {
   const [downLoadLeading, setDownLoadLeading] = useState(false);
   const [downLoadLeading2, setDownLoadLeading2] = useState(false);
+  const [downLoadLeading3, setDownLoadLeading3] = useState(false);
   const [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
     SelectedClientDetails,
   );
   const screens = useBreakpoint();
   return (
-    <div
-      //   style={{
-      //     minHeight: "70vh",
-      //     display: "flex",
-      //     alignItems: "center",
-      //     justifyContent: "center",
-      //     padding: "24px",
-      //   }}
-      className="download-wrapper"
-    >
+    <div className="download-wrapper">
       <div className="cloud cloud-1" />
       <div className="cloud cloud-2" />
       <div className="cloud cloud-3" />
@@ -114,6 +107,34 @@ const DownloadSection = () => {
             loading={downLoadLeading2}
           >
             Download Authorities
+          </Button>
+        </div>
+        <div className="d-flex justify-content-center align-items-center gap-2 mt-3">
+          {/* CTA */}
+          <Button
+            htmlType="button"
+            color="default"
+            variant="filled"
+            size="large"
+            icon={<FaDownload />}
+            style={{
+              borderRadius: 8,
+              paddingInline: 24,
+            }}
+            onClick={async () => {
+              try {
+                setDownLoadLeading3(true);
+                await GenerateFileNote(selectedClientDetails._id);
+              } catch (err) {
+                console.error("Document Download Error:", err);
+              } finally {
+                setDownLoadLeading3(false);
+              }
+            }}
+            disabled={downLoadLeading3}
+            loading={downLoadLeading3}
+          >
+            Download File Note
           </Button>
         </div>
       </Card>

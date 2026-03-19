@@ -13,6 +13,7 @@ import {
   convertDateAUWithDayJS,
   generateDocumentFromTemplate,
   GetAxios,
+  openNotificationSuccess,
   RenderName,
   toCommaAndDollar,
   toSentenceCase,
@@ -32,10 +33,13 @@ function toIdNameMap(arr = []) {
 }
 
 const RemoveSpan = (text) => {
-  let cleanedText = text.replace(/<span[^>]*>|<\/span>/g, "");
-  cleanedText = cleanedText.replace(/<strong[^>]*>|<\/strong>/g, "");
-  cleanedText = cleanedText.replace(/<br>/g, "");
-  return cleanedText;
+  if (!text) return "";
+
+  return text
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ") // collapse multiple spaces
+    .trim(); // remove leading/trailing spaces
 };
 
 function PerosonalDetail(personalDetails, user) {
@@ -196,11 +200,9 @@ function Will(will, user) {
         };
       }) || [],
     [user + "EnduringGuardianship"]: will?.[user]?.enduringGuardianship || "",
-
     [user + "EstatePlanningRadio"]: will?.[user]?.estatePlanningRadio || "",
     [user + "description"]: will?.[user]?.estatePlanningdescription || "",
   };
-
   return CenterlinkData;
 }
 
@@ -223,21 +225,25 @@ function INCOME_AND_EXPENSES(allQuestions, CRState, user) {
       : 0);
 
   const SuperPensionPayment =
-    (CRState.accountBasedPensionIssues == "Yes"
-      ? allQuestions?.accountBasedPensionIssues?.[user].reduce(
+    (CRState.accountBasedPensionIssues === "Yes" &&
+    Array.isArray(allQuestions?.accountBasedPensionIssues?.[user])
+      ? allQuestions.accountBasedPensionIssues[user].reduce(
           (t, e) =>
             t +
-            parseFloat((e.pensionPayment || "$0").replace(/[^0-9.-]+/g, "")),
+            parseFloat((e?.pensionPayment || "$0").replace(/[^0-9.-]+/g, "")),
           0,
         )
       : 0) +
-    (CRState.SMSFPensionPhase == "Yes"
-      ? allQuestions?.SMSFPensionPhase?.[user].reduce((Total, e) => {
-          const clientSum = e?.pensionBenefitsTotalArray?.reduce(
-            (benefitTotal, benefit) =>
-              benefitTotal + parseMoney(benefit?.pensionPayment || "$0"),
-            0,
-          );
+    (CRState.SMSFPensionPhase === "Yes" &&
+    Array.isArray(allQuestions?.SMSFPensionPhase?.[user])
+      ? allQuestions.SMSFPensionPhase[user].reduce((Total, e) => {
+          const clientSum = Array.isArray(e?.pensionBenefitsTotalArray)
+            ? e.pensionBenefitsTotalArray.reduce(
+                (benefitTotal, benefit) =>
+                  benefitTotal + parseMoney(benefit?.pensionPayment || "$0"),
+                0,
+              )
+            : 0;
 
           return Total + clientSum;
         }, 0)
@@ -635,6 +641,10 @@ function Summary_of_Networth(allQuestions, CRState, personalDetails, user) {
 
   const data = {};
 
+  const maritalStatus = personalDetails?.client?.clientMaritalStatus || "";
+
+  const isSingle = ["Single", "Widowed", ""].includes(maritalStatus);
+
   /* -------------------- Lifestyle Assets -------------------- */
 
   const lifestyleKeys = [
@@ -661,17 +671,31 @@ function Summary_of_Networth(allQuestions, CRState, personalDetails, user) {
 
   data[user + "CarCurrentValue"] = get(allQuestions?.car?.[user]?.currentValue);
 
-  data[user + "ContentsCurrentValue"] = get(
-    allQuestions?.houseHold?.[user]?.currentValue,
-  );
+  if (user == "client" && isSingle) {
+    data[user + "ContentsCurrentValue"] = get(
+      allQuestions?.houseHold?.joint?.currentValue,
+    );
 
-  data[user + "BoatCurrentValue"] = get(
-    allQuestions?.boat?.[user]?.currentValue,
-  );
+    data[user + "BoatCurrentValue"] = get(
+      allQuestions?.boat?.joint?.currentValue,
+    );
 
-  data[user + "CaravanCurrentValue"] = get(
-    allQuestions?.caravan?.[user]?.currentValue,
-  );
+    data[user + "CaravanCurrentValue"] = get(
+      allQuestions?.caravan?.joint?.currentValue,
+    );
+  } else {
+    data[user + "ContentsCurrentValue"] = get(
+      allQuestions?.houseHold?.[user]?.currentValue,
+    );
+
+    data[user + "BoatCurrentValue"] = get(
+      allQuestions?.boat?.[user]?.currentValue,
+    );
+
+    data[user + "CaravanCurrentValue"] = get(
+      allQuestions?.caravan?.[user]?.currentValue,
+    );
+  }
 
   data[user + "OtherAssetsCurrentValue"] = get(
     allQuestions?.otherAssets?.[user]?.currentValue,
@@ -815,10 +839,6 @@ function Summary_of_Networth(allQuestions, CRState, personalDetails, user) {
   /* -------------------- Liabilities -------------------- */
 
   const liabilityKeys = [];
-
-  const maritalStatus = personalDetails?.client?.clientMaritalStatus || "";
-
-  const isSingle = ["Single", "Widowed", ""].includes(maritalStatus);
 
   if (user === "client" && isSingle) {
     data[user + "LiabilityCreditCards"] = get(
@@ -1157,7 +1177,7 @@ function generateUserFinancialPortfolioData(
                           totalConcessional: e.totalConcessional || "$0",
                         };
                       })
-                      .slice(-5)
+                      .slice(-6)
                   : [],
               coverType: groupInsuranceDetails?.coverType || "",
               coverType2: groupInsuranceDetails?.coverType2 || "",
@@ -1420,8 +1440,11 @@ function buildLifeTPDTraumaArray(policies = [], providerMap = {}, owner) {
       obj[`Trauma${position}`] =
         policy?.LifeTPDTraumaDetails?.trauma || policy?.trauma || "$0";
 
-      obj[`premiumPa${position}`] =
-        policy?.premiumsDetails?.totalCost || policy?.premiums || "$0";
+      obj[`premiumPa${position}`] = toCommaAndDollar(
+        parseMoney(policy?.premiumsDetails?.life || "$0") +
+          parseMoney(policy?.premiumsDetails?.tpd || "$0") +
+          parseMoney(policy?.premiumsDetails?.trauma || "$0"),
+      );
 
       obj[`payeeOfPremiums${position}`] =
         policy?.premiumsDetails?.payeeOfPremiums || "";
@@ -1449,8 +1472,6 @@ function buildLifeTPDTraumaArray(policies = [], providerMap = {}, owner) {
       obj[`showPolicy${i}`] = false;
     }
 
-    // console.log(`Processed chunk ${chunkIndex + 1}:`, obj);
-    // return []
     return obj;
   });
 }
@@ -1507,12 +1528,12 @@ function buildSMSFObject(clientData, partnerData) {
   const clientMap = {};
   const partnerMap = {};
 
-  (client?.contributionsArray || []).forEach((item, index) => {
+  (client?.contributionsArray?.newEntries || []).forEach((item, index) => {
     const year = (client?.contributionsStartYear || 0) + index + 1;
     clientMap[year] = item;
   });
 
-  (partner?.contributionsArray || []).forEach((item, index) => {
+  (partner?.contributionsArray?.newEntries || []).forEach((item, index) => {
     const year = (partner?.contributionsStartYear || 0) + index + 1;
     partnerMap[year] = item;
   });
@@ -1595,17 +1616,6 @@ function buildSMSFObject(clientData, partnerData) {
   };
 }
 
-function buildSMSFAssetArray(array = [], institutionMap = {}) {
-  if (!Array.isArray(array) || array.length === 0) {
-    return [];
-  }
-
-  return array.map((item) => ({
-    ...item,
-    Institution: institutionMap?.[item?.Institution] || item?.Institution || "",
-  }));
-}
-
 const GeneraDocument = async (id, FileName = "template.docx") => {
   try {
     console.log("Document generation started for ID:", id);
@@ -1620,20 +1630,6 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
     let CRState = getCRState();
     let bankDetailObj = getBankDetail();
 
-    const Banks = toIdNameMap(bankDetailObj.FinancialInstitutions);
-
-    // console.log(
-    //   "Recoil values →",
-    //   "PersonalDetail:",
-    //   personalDetails,
-    //   "Questions:",
-    //   allQuestions,
-    //   "Goals:",
-    //   goalsAndObjective,
-    //   "GQState:",
-    //   GQState.clientFK,
-    // );
-
     const requests = [];
 
     // Personal Details
@@ -1646,8 +1642,6 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
         ),
       );
     }
-
-    // console.log(isEmptyObject(CRState), CRState.clientFK === id);
 
     // Questions Yes/No
     if (isEmptyObject(CRState) || CRState.clientFK !== id) {
@@ -1688,16 +1682,19 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       );
     }
 
-    // console.log(isEmptyObject(GQState), GQState.clientFK === id);
-
     // Goals & Objectives
     if (isEmptyObject(GQState) || GQState.clientFK !== id) {
       requests.push(
-        GetAxios(`${defaultUrl}/api/goalsQuestions/getByClient/${id}`).then(
-          (res) => {
-            if (!isEmptyObject(res)) GQState = res;
-          },
-        ),
+        GetAxios(`${defaultUrl}/api/goalsQuestions/getByClient/${id}`)
+          .then((res) => {
+            if (!isEmptyObject(res)) {
+              GQState = res;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            GQState = {};
+          }),
       );
     }
 
@@ -1873,6 +1870,20 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
         ),
       ],
 
+      //Life,TPD, Trauma, Income Protection Insurance policies auth array
+      clientLifeTPDTraumaAuthArray:
+        allQuestions?.personalInsurance?.client?.PersonalInsurance.map(
+          (item, _) => {
+            let prodivers = toIdNameMap(
+              bankDetailObj?.PersonalInsurances || [],
+            );
+            return {
+              ...item,
+              provider: prodivers?.[item.provider] || "",
+            };
+          },
+        ),
+
       clientAccumulationBalanceCurrentBalance:
         allQuestions?.SMSFAccumulationDetails?.client?.[0]
           ?.accumulationBenefitsArray?.[0]?.currentBalance || "",
@@ -1969,6 +1980,18 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
                 "partner",
               ),
             ],
+            partnerLifeTPDTraumaAuthArray:
+              allQuestions?.personalInsurance?.partner?.PersonalInsurance.map(
+                (item, _) => {
+                  let prodivers = toIdNameMap(
+                    bankDetailObj?.PersonalInsurances || [],
+                  );
+                  return {
+                    ...item,
+                    provider: prodivers?.[item.provider] || "",
+                  };
+                },
+              ),
           }
         : {
             partnerAccumulationBalanceCurrentBalance: "",
@@ -1983,6 +2006,7 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
             partnerBankAccounts: [],
             partnerTermDeposits: [],
             partnerAustralianShare: [],
+            partnerLifeTPDTraumaAuthArray: [],
 
             // Partner Data
             partnerTitle: "",
@@ -2369,8 +2393,10 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       SMSFTrusteeType: allQuestions?.SMSFDetails?.SMSFOwner?.trusteeType || "",
       SMSFTrusteeName: allQuestions?.SMSFDetails?.SMSFOwner?.trusteeName || "",
       SMSFACN: allQuestions?.SMSFDetails?.SMSFOwner?.ACN || "",
+
       isSMSFTrusteeTypeIsCorporateTrustee:
-        allQuestions?.SMSFDetails?.SMSFOwner?.trusteeType !== "Corporate",
+        allQuestions?.SMSFDetails?.SMSFOwner?.trusteeType == "Corporate",
+
       directorNamesList:
         allQuestions?.SMSFDetails?.SMSFOwner?.directorsOfCorporateTrustee || [],
       isBareTrustYes: allQuestions?.SMSFDetails?.SMSFOwner?.bareTrust == "Yes",
@@ -2476,7 +2502,9 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       FamilyTrustPlaceOfBusiness:
         allQuestions?.familyDetails?.familyTrustOwner?.placeOfBusiness || "",
       FamilyTrustEstablishmentDate:
-        convertDateAUWithDayJS(allQuestions?.familyDetails?.familyTrustOwner?.establishmentDate) || "",
+        convertDateAUWithDayJS(
+          allQuestions?.familyDetails?.familyTrustOwner?.establishmentDate,
+        ) || "",
       FamilyTrustTrusteeType:
         allQuestions?.familyDetails?.familyTrustOwner?.trusteeType || "",
       FamilyTrustDirectorNamesList:
@@ -2489,6 +2517,7 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       isFamilyTrustTrusteeTypeCorporate:
         allQuestions?.familyDetails?.familyTrustOwner?.trusteeType ==
         "Corporate",
+
       FamilyTrustNameOfAccountant:
         allQuestions?.familyDetails?.familyTrustOwner?.nameOfAccountant || "",
 
@@ -2690,8 +2719,8 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       }
 
       let SMSFContributionsArray =
-        allQuestions?.SMSFAccumulationDetails?.partner?.[0]
-          ?.contributionsArray || [];
+        allQuestions?.SMSFAccumulationDetails?.partner?.[0]?.contributionsArray
+          ?.newEntries || [];
 
       if (
         SMSFContributionsArray.length > 0 &&
@@ -2716,8 +2745,9 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
           );
         }, 0) +
           parseMoney(
-            SMSFContributionsArray?.at(-3)?.nonConcessionalContributions ||
-              "$0",
+            Array.isArray(SMSFContributionsArray)
+              ? SMSFContributionsArray.at(-3)?.nonConcessionalContributions
+              : "$0",
           ),
       );
 
@@ -2869,8 +2899,6 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
     let clientTotalDeductions = clientExpances + SalarySacrificeClient;
     let partnerTotalDeductions = partnerExpances + SalarySacrificePartner;
 
-    console.log(SalarySacrificeClient, clientExpances);
-
     // now we calculate client and partner payed intrust on property loan
 
     let clientInterest = [];
@@ -2880,11 +2908,11 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
           parseMoney(item?.propertyLoanDetails || "$0") *
             (parseMoney(
               item?.propertyLoanDetailsArray[0]?.InterestRate || "0%",
-            )/100) *
+            ) /
+              100) *
             (parseMoney(item?.clientOwnership || "0%") / 100),
         );
       });
-
 
     let partnerInterest = [];
     allQuestions?.investmentPropertyDetails.client &&
@@ -2893,15 +2921,14 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
           parseMoney(item?.propertyLoanDetails || "$0") *
             (parseMoney(
               item?.propertyLoanDetailsArray[0]?.InterestRate || "0%",
-            )/100) *
+            ) /
+              100) *
             (parseMoney(item?.partnerOwnership || "0%") / 100),
         );
       });
 
     clientInterest = clientInterest.reduce((a, b) => a + b, 0);
     partnerInterest = partnerInterest.reduce((a, b) => a + b, 0);
-
-
 
     //now adding total interest payed with total Deductions to get total deductions for client and partner
     let totalDeductionsClient = clientTotalDeductions + clientInterest;
@@ -2912,7 +2939,6 @@ const GeneraDocument = async (id, FileName = "template.docx") => {
       parseMoney(payload.clientTotalIncome || "$0") - totalDeductionsClient;
     let PartnerNetTaxableIncome =
       parseMoney(payload.partnerTotalIncome || "$0") - totalDeductionsPartner;
-
 
     // the Tax Brackets in Australia
 
