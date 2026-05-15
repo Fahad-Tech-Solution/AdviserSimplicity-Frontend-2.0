@@ -8,7 +8,7 @@ import {
   getCRState,
   getBankDetail,
   getRiskQuestion,
-} from "../../../Store/recoilUtils";
+} from "../../../Store/RecoilUtils";
 import {
   generateDocumentFromTemplate,
   openNotificationSuccess,

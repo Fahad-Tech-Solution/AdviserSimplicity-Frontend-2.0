@@ -12,7 +12,7 @@ import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-C
 import {
   getJwtToken,
   getUserDetail,
-} from "../../../Store/recoilUtils";
+} from "../../../Store/RecoilUtils";
 
 const getAuthHeaders = () => {
   const token = getJwtToken();
