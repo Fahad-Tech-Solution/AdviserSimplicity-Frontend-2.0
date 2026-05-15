@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "devHost": "vite --host 192.168.3.39",
-    "build": "vite build",
+    "build": "vite build && node scripts/prepare-pages.mjs",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "npm run build",
