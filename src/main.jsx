@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { RecoilRoot } from "recoil";
 import { ConfigProvider, notification } from "antd";
-import { BrowserRouter, HashRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import RecoilNexus from "recoil-nexus";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
