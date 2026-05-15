@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://fahad-tech-solution.github.io/AdviserSimplicity-Frontend-2.0",
+  "homepage": "https://fahad-tech-solution.github.io/AdviserSimplicity-Frontend-2.0/",
   "scripts": {
     "dev": "vite",
     "devHost": "vite --host 192.168.3.39",
