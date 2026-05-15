@@ -144,6 +144,7 @@ function App() {
 
           {/* Catch All */}
           <Route path="*" element={<Navigate to="/user/login" replace />} />
+
         </Routes>
       </Suspense>
     </div>

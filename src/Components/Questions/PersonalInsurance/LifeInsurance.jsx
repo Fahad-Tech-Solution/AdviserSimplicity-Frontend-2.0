@@ -256,6 +256,7 @@ const PersonalInsuranceLife = (props) => {
       selectedStakeholders: values?.selectedStakeholders || [],
       clientFK: localStorage.getItem("UserID"),
     };
+    
     console.log("Payload :", Obj);
     // return false;
 

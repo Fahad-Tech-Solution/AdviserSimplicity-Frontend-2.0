@@ -8,6 +8,7 @@ export default defineConfig({
     host: true, // ← allows access via IP address
     port: 5173, // optional: choose your port
   },
+  base: "/AdviserSimplicity-Frontend-2.0/",
 });
 
 //Converted Full Project into Vite Frame Work by copying and Establishing and installing Libraries

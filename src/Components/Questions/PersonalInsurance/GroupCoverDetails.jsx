@@ -45,10 +45,12 @@ const GroupCoverDetails = (props) => {
         "tpd",
         existingData?.groupInsuranceDetails?.TPDCover || "$0"
       );
+
       console.log(
         "ip value is :",
         existingData?.groupInsuranceDetails?.monthlyIncome
       );
+      
       let ip =
         existingData?.groupInsuranceDetails?.monthlyIncome &&
         existingData?.groupInsuranceDetails?.monthlyIncome !== "$0"
