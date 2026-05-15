@@ -1,0 +1,19 @@
+:root {
+    --Color_theme: #28a745;
+  }
+  
+  .progress {
+    height: 20px;
+  }
+  
+  .progress-bar {
+    background-color: var(--Color_theme);
+  }
+  
+  @media all and (max-width: 480px) {
+    .progress {
+      height: 10px;
+    }
+  }
+
+  

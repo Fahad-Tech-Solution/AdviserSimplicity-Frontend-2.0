@@ -1,0 +1,566 @@
+import React, { useEffect, useState } from "react";
+import "./AdditionalQueries.css";
+
+import car from "../svgs/car.svg";
+import boat from "../svgs/boat.svg";
+import trailer from "../svgs/trailer-caravan.svg";
+import settingMoney from "../svgs/settingMoney.svg";
+import houseHold from "../svgs/warehouse-.svg";
+import otherAssets from "../svgs/funds.svg";
+import Questions_Home from "../svgs/home-svgrepo-com.svg";
+
+import moneyGiving from "../svgs/moneyGiving.png";
+import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
+
+import { useRecoilState, useRecoilValue } from "recoil";
+import { CRState, defaultUrl } from "../../../Store/Store";
+import { Form, Formik } from "formik";
+import {
+  GetAxios,
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+} from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
+
+const AdditionalQueriesPersonalAssets = (props) => {
+  let [CRObject, setCRObject] = useRecoilState(CRState);
+
+  const [flagState, setFlagState] = useState(false);
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
+
+  const FetchQuestions = async () => {
+    try {
+      const res = await GetAxios(
+        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+      );
+      if (res) {
+        setCRObject(res);
+        setFlagState(true);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      setCRObject({
+        //Financial Assets
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
+
+        personalLoans: "No",
+
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "Yes",
+        POA: "Yes",
+        professionalAdviser: "No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+
+        //keys which just controls rendering
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        SMSFOtherInvestment: "No",
+        familyOtherInvestment: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (CRObject._id) {
+      setFlagState(true);
+    } else {
+      FetchQuestions();
+    }
+  }, []);
+
+  const handleResponse = (values) => {
+    setCRObject(values);
+    localStorage.setItem("QuestionsState", JSON.stringify(values));
+    props.setQuestionChange(false);
+    localStorage.setItem("Question", "PersonalAssets");
+  };
+
+  const onSubmit = async (values) => {
+    values.clientFK = localStorage.getItem("UserID");
+    try {
+      if (!flagState) {
+        const PostRes = await PostAxios(
+          `${DefaultUrl}/api/questions/Add`,
+          values
+        );
+        if (PostRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      } else {
+        const PatchRes = await PatchAxios(
+          `${DefaultUrl}/api/questions/Update/${localStorage.getItem(
+            "UserID"
+          )}`,
+          values
+        );
+        if (PatchRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      }
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+    }
+  };
+
+  let QuestionArray = [
+    {
+      title: "Family Home",
+      img: Questions_Home,
+      key: "familyHome",
+    },
+    {
+      title: "Cars",
+      key: "car",
+      img: car,
+    },
+    {
+      title: "Household",
+      key: "houseHold",
+      img: houseHold,
+    },
+    {
+      title: "Boat",
+      key: "boat",
+      img: boat,
+    },
+    {
+      title: "Caravan",
+      key: "caravan",
+      img: trailer,
+    },
+    // {
+    //     title: "Do you have any other Personal Assets?",
+    //     key: "personalAssets",
+    //     img: settingMoney,
+    // },
+    {
+      title: "Other Assets",
+      key: "otherAssets",
+      img: settingMoney,
+    },
+    {
+      title: "Personal Loans",
+      key: "personalLoans",
+      img: moneyGiving,
+      //   info: "Information that this includes Credit Cards or Personal Loans",
+    },
+    {
+      title: "Credit Cards",
+      key: "creditCards",
+      img: credit,
+    },
+  ];
+
+  const QuestionClick = (index, elem, values, setFieldValue) => {
+    // console.log("image clicked in goals", index, elem.key, values);
+    if (values[elem.key] == "No") {
+      setFieldValue(elem.key, "Yes");
+    } else {
+      setFieldValue(elem.key, "No");
+    }
+  };
+
+  return (
+    <div className="container-fluid">
+      <div className="row m-0">
+        <Formik
+          initialValues={CRObject}
+          onSubmit={onSubmit}
+          enableReinitialize
+          innerRef={props.formRef}
+        >
+          {({ values, handleChange, setFieldValue }) => (
+            <Form>
+              <div className="col-md-12 text-center">
+                <h4 className="heading d-none">Income</h4>
+
+                <div className="row my-3 justify-content-center">
+                  <DynamicQuestionBlocks
+                    QuestionArray={QuestionArray}
+                    QuestionClick={QuestionClick}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                  />
+
+                  <div className="col-md-12 d-none">
+                    <div className="mb-3 ">
+                      <label htmlFor="" className="form-label">
+                        Do you have Cars?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={car} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="car"
+                            id="car1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.car === "No"}
+                          />
+                          <label htmlFor="car1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="car"
+                            id="car2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.car === "Yes"}
+                          />
+                          <label htmlFor="car2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have a Boat?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={boat} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="boat"
+                            id="boat1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.boat === "No"}
+                          />
+                          <label htmlFor="boat1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="boat"
+                            id="boat2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.boat === "Yes"}
+                          />
+                          <label htmlFor="boat2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have a Caravan?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={trailer} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="caravan"
+                            id="caravan1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.caravan === "No"}
+                          />
+                          <label htmlFor="caravan1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="caravan"
+                            id="caravan2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.caravan === "Yes"}
+                          />
+                          <label htmlFor="caravan2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any other Personal Assets?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={settingMoney} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="personalAssets"
+                            id="personalAssets1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.personalAssets === "No"}
+                          />
+                          <label htmlFor="personalAssets1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="personalAssets"
+                            id="personalAssets2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.personalAssets === "Yes"}
+                          />
+                          <label htmlFor="personalAssets2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Personal Loans?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={moneyGiving} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="personalLoans"
+                            id="personalLoans1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.personalLoans === "No"}
+                          />
+                          <label htmlFor="personalLoans1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="personalLoans"
+                            id="personalLoans2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.personalLoans === "Yes"}
+                          />
+                          <label htmlFor="personalLoans2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Credit Cards?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={credit} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="creditCards"
+                            id="creditCards1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.creditCards === "No"}
+                          />
+                          <label htmlFor="creditCards1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="creditCards"
+                            id="creditCards2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.creditCards === "Yes"}
+                          />
+                          <label htmlFor="creditCards2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row mt-2 d-none">
+                  <div className="col-md-12">
+                    <button
+                      onClick={() => {}}
+                      type="submit"
+                      className="float-end btn w-25  bgColor modalBtn"
+                    >
+                      Next
+                    </button>
+                    <button
+                      onClick={() => {
+                        setQuestionChange("FinancialInvestments");
+                      }}
+                      className="float-end btn w-25  btn-outline  backBtn mx-3"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
+  );
+};
+
+export default AdditionalQueriesPersonalAssets;

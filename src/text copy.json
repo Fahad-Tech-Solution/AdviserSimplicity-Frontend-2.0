@@ -1,0 +1,44 @@
+{
+    "productProvider": "68b90ed8dd9aaadd027ab071",
+    "accountNumber": 123,
+    "sourceFunds": "Ordinary",
+    "originalInvestmentAmount": "$123",
+    "returnCapitalValue": "$123",
+    "annualAnnuityPayment": "$492",
+    "annualPensionPaymentArray": [],
+    "annuityType": "Lifetime",
+    "term": "11",
+    "yearsMaturity": "9",
+    "nominatedBeneficiaries": "Yes",
+    "beneficiariesArray": [],
+    "annualAdvice": "$100",
+    "annualAnnuityPaymentDetails": {
+        "regularAmount": "$123",
+        "frequency": "4",
+        "total": "$492"
+    },
+    "nominatedBeneficiariesDetails": {
+        "nominatedBeneficiariesArray": [
+            {
+                "relationshipStatus": "Child",
+                "beneficiaryName": "123",
+                "DOB": "2012-09-11",
+                "shareBenefit": "50.00%"
+            },
+            {
+                "relationshipStatus": "Interdependant",
+                "beneficiaryName": "123",
+                "DOB": "1999-11-28",
+                "shareBenefit": "50.00%"
+            }
+        ],
+        "nominationType": "Binding (Non-Lapsing)",
+        "NumberOfMap": 2
+    },
+    "annualAdviceArray": {
+        "NumberOfMap": "",
+        "serviceFee": "$100",
+        "annualAdviserServiceFee": "$100",
+        "frequency": "Annualy"
+    }
+}

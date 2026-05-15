@@ -1,0 +1,232 @@
+import React, { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { Layout } from "antd";
+import AdminSideBar from "../Components/SideBar/AdminSideBar";
+import Options from "../Components/Options";
+import AllClients from "../GetComponents/AllClients";
+import ViewClient from "../GetComponents/ViewClient";
+import Dashboard from "../Components/Dashboard/Dashboard";
+import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
+import QuestionsNew from "../Components/Questions_New/QuestionsNew";
+import FinancialInvestments from "../Components/Questions/FinancialInvestments/FinancialInvestments";
+import AdditionalQueriesPersonalAssets from "../Components/Questions/AdditionalQueriesPersonalAssets/AdditionalQueriesPersonalAssets";
+import LifestyleAssetsAndDebt from "../Components/Questions/LifestyleAssetsAndDebt/LifestyleAssetsAndDebt";
+import AdditionalQueriesInvestment from "../Components/Questions/AdditionalQueriesInvestment/AdditionalQueriesInvestment";
+import AdditionalQueriesProfessionalAdvisor from "../Components/Questions/AdditionalQueriesProfessionalAdvisor/AdditionalQueriesProfessionalAdvisor";
+import QuestionsSMSF from "../Components/Questions/QuestoinsSMSF/QuestoinsSMSF";
+import EstatePlanning from "../Components/Questions/EstatePlanning/EstatePlanning";
+import AdditionalQueriesSuperAndRetirement from "../Components/Questions/AdditionalQueriesSuperAndRetirement/AdditionalQueriesSuperAndRetirement";
+import PersonalIncome from "../Components/Questions/PersonalIncome/PersonalIncome";
+import BusinessEntities from "../Components/Questions/BusinessEntities/BusinessEntities";
+import QuestionsFamily from "../Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily";
+import GoalsObjectiveNew from "../Components/Goals&Objectives/GoalsObjectiveNew";
+import RiskProfileNew from "../Components/RiskProfile/RiskProfileNew";
+import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
+import CDFclients from "../Components/CDFclients/CDFclients";
+import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
+import MyTeam from "../Components/SuperAdminComponent/MyTeam";
+
+import { Header } from "antd/es/layout/layout";
+import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { GetAxios } from "../Components/Assets/Api/Api";
+import PersonalInsuranceQuestions from "../Components/Questions/PersonalInsurance/PersonalInsuranceQuestions";
+import DownloadSection from "../Components/Questions/DownloadSection/DownloadSection";
+
+const { Sider, Content } = Layout;
+
+function AuthRouts() {
+  const [collapsed, setCollapsed] = useState(true);
+  let [employee, setEmployee] = useRecoilState(Employees);
+  let [bankDetailObj, setBankDetailObj] = useRecoilState(BankDetail);
+
+  const routeConfigs = [
+    {
+      path: "/my-clients",
+      element: (collapsed) => <Dashboard collapsed={collapsed} />,
+    },
+    { path: "/all-client", element: (collapsed) => <AllClients /> },
+    { path: "/view-client", element: (collapsed) => <ViewClient /> },
+    { path: "/personal-detail", element: (collapsed) => <PersonalDetailNew /> },
+    {
+      path: "/personal-income",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <PersonalIncome />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/personal-assets",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <AdditionalQueriesPersonalAssets />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/financial-investments",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <FinancialInvestments />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/super-and-retirement",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <AdditionalQueriesSuperAndRetirement />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/life-Style",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <LifestyleAssetsAndDebt />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/investment",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <AdditionalQueriesInvestment />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/estate-planning",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <EstatePlanning />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/professional-advisor",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <AdditionalQueriesProfessionalAdvisor />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/personal-insurance",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <PersonalInsuranceQuestions />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/business-entities",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <BusinessEntities />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/SMSF",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <QuestionsSMSF />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/family-trust",
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
+          <QuestionsFamily />
+        </QuestionsNew>
+      ),
+    },
+    {
+      path: "/download-document",
+      element: (collapsed) => <DownloadSection />,
+    },
+    {
+      path: "/goals-and-objectives",
+      element: (collapsed) => <GoalsObjectiveNew />,
+    },
+    { path: "/risk-profile/*", element: (collapsed) => <RiskProfileNew /> },
+    { path: "/CDF-prospects", element: (collapsed) => <CDFclients /> },
+    { path: "/profile", element: (collapsed) => <ProfileTemp /> },
+    { path: "/my-team", element: (collapsed) => <MyTeam /> },
+  ];
+
+  const [role, setRoles] = useRecoilState(Roles);
+  let DefaultUrl = useRecoilValue(defaultUrl);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      // Run multiple GET APIs in parallel
+      const [rolesRes, Employees, Investment] = await Promise.all([
+        GetAxios(`${DefaultUrl}/api/role`),
+        GetAxios(`${DefaultUrl}/api/user/Employees`),
+        GetAxios(`${DefaultUrl}/api/investmentoffer/`),
+      ]);
+
+      // Update state only if responses exist
+      if (rolesRes) setRoles(rolesRes);
+      if (Employees) setEmployee(Employees);
+      if (Investment) setBankDetailObj(Investment);
+
+      // console.log(Investment);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // You could show a toast or alert here instead
+    }
+  };
+
+  return (
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={250}
+        style={{ background: "#fff", borderRight: "1px solid #f0f0f0" }}
+      >
+        <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
+      </Sider>
+      <Layout
+        style={{
+          background: "#fff",
+          overflowX: "hidden",
+        }}
+      >
+        <Header
+          style={{
+            background: "#fff",
+            padding: 0,
+          }}
+        >
+          <Options collapsed={collapsed} setCollapsed={setCollapsed} />
+        </Header>
+        <Content
+          style={{
+            margin: "16px 10px",
+            background: "#fff",
+            height: "100%",
+            padding: "1rem 0rem",
+          }}
+        >
+          <Routes>
+            {routeConfigs.map(({ path, element }, idx) => (
+              <Route key={path} path={path} element={element(collapsed)} />
+            ))}
+          </Routes>
+        </Content>
+      </Layout>
+    </Layout>
+  );
+}
+
+export default AuthRouts;

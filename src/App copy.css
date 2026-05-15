@@ -1,0 +1,2179 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+/* Regular */
+@font-face {
+  font-family: "Segoe UI Custom";
+  src: url("./assets/font/segoeuithis.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Bold */
+@font-face {
+  font-family: "Segoe UI Custom";
+  src: url("./assets/font/segoeuithibd.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Italic */
+@font-face {
+  font-family: "Segoe UI Custom";
+  src: url("./assets/font/segoeuithisi.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Bold Italic */
+@font-face {
+  font-family: "Segoe UI Custom";
+  src: url("./assets/font/segoeuithisz.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+body {
+  position: relative;
+}
+
+* {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#Shapaik {
+  margin-top: 80px;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+#Options {
+  color: black;
+}
+
+.Options {
+  color: black;
+  text-decoration: none;
+}
+
+.Options:hover {
+  color: #36b446;
+  text-decoration: none;
+}
+
+.optionActive {
+  color: #36b446 !important;
+  /* background-color: #36B446; */
+  text-decoration: none;
+}
+
+.borderOverAll {
+  padding-right: 2rem;
+  padding-left: 2rem;
+}
+
+.mainBody {
+  padding-right: 1.5rem;
+  padding-left: 2.6rem;
+  /* margin-top: 10rem; */
+  /* background-color: #36B446; */
+  /* border: 1px solid red; */
+}
+
+.mainBody2 {
+  padding-right: 1.5rem;
+  padding-left: 2.6rem;
+  margin-top: 6rem;
+  /* background-color: #36B446; */
+  /* border: 1px solid red; */
+}
+
+.topMaiBody {
+  transition: all 0.5s ease;
+}
+
+.LargeSheet {
+  text-align: center;
+}
+
+@media only screen and (min-width: 1045px) {
+  .mainBody {
+    padding-right: 1.5rem !important;
+    padding-left: 2.6rem !important;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .QuestionIcon {
+    width: 100px !important;
+  }
+
+  .LargeSheet {
+    text-align: left !important;
+    padding-left: 6.5rem !important;
+  }
+}
+
+@media only screen and (min-width: 2165px) {
+  .LargeSheet {
+    text-align: left !important;
+    padding-left: 11.5rem !important;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .mainBody {
+    padding-right: 1.5rem !important;
+    padding-left: 2.6rem !important;
+  }
+}
+
+@media only screen and (max-width: 761px) {
+  .mainBody {
+    padding-right: 1.5rem !important;
+    padding-left: 1.5rem !important;
+    margin-top: 2rem;
+  }
+}
+
+.clientFS {
+  font-family: "Segoe UI Custom", sans-serif;
+  font-optical-sizing: auto !important;
+  font-size: larger;
+}
+
+.QuestionIcon {
+  width: 10%;
+  /* max-width: 8%; */
+  margin: auto;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.QuestionIconChild {
+  /* width: 10%; */
+  max-width: 8%;
+  margin: auto;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.leftPaddingImage {
+  margin-left: 15px;
+  /* border: 0.5px solid #e00000; */
+}
+
+/* arccadian */
+.Custom_Accordion .accordion-button {
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  &&:hover {
+    background-color: #36b446;
+    color: white;
+  }
+}
+
+.Custom_Accordion .accordion-button:focus {
+  box-shadow: none !important;
+  border-color: none;
+}
+
+.Custom_Accordion {
+  --bs-accordion-border-color: none !important;
+  --bs-accordion-bg: transparent !important;
+  --bs-accordion-active-color: #36b446 !important;
+  --bs-accordion-active-bg: transparent !important;
+  --bs-accordion-body-padding-x: 0px !important;
+  --bs-accordion-body-padding-y: 0px !important;
+  --bs-accordion-btn-active-icon: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2336B446'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>") !important;
+}
+
+.removeLeftBar .Custom_hover a {
+  font-size: 12px !important;
+}
+
+.removeLeftBar {
+  --bs-accordion-border-color: none !important;
+  --bs-accordion-bg: transparent !important;
+  --bs-accordion-active-color: #36b446 !important;
+  --bs-accordion-active-bg: transparent !important;
+  --bs-accordion-body-padding-x: 0px !important;
+  --bs-accordion-body-padding-y: 0px !important;
+  --bs-accordion-btn-active-icon: url("") !important;
+}
+
+.removeLeftBar .accordion-button::after {
+  all: unset !important;
+}
+
+.removeLeftBar .accordion-button {
+  padding: 5px 0px 5px 0px;
+  /* text-align: center; */
+  display: flex;
+  justify-content: center;
+  box-shadow: none;
+
+  &&:is(:hover, :focus, :active) {
+    box-shadow: none;
+  }
+}
+
+.Custom_hover {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.Custom_hover a {
+  color: #0a0a0a;
+  font-size: 14px;
+  text-decoration: none;
+  position: relative;
+}
+
+.Custom_hover:is(:hover, :focus, :active) {
+  background-color: #36b446;
+  color: transparent;
+}
+
+.Custom_hover:is(:hover, :focus, :active) a {
+  color: white;
+  background-color: #36b446;
+}
+
+.Custom_hover.active a {
+  color: white;
+  background-color: #36b446;
+}
+
+.Custom_hover.active {
+  background-color: #36b446;
+  color: transparent;
+}
+
+.LabelSize {
+  font-size: 17px;
+}
+
+.GreenColor {
+  color: #36b446;
+}
+
+/** businessTextStructure.css  */
+.iconContainer {
+  color: #ffffff;
+  width: 20px;
+  display: inline-block;
+}
+
+.iconContainerLg {
+  width: 40px;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.chek1 {
+  display: inline-block;
+  background-color: aquamarine;
+}
+
+.radiobutton {
+  background-color: white;
+  height: 35px;
+  width: 150px;
+  position: absolute;
+  /* border-radius: 10px; */
+  overflow: hidden;
+  border: 1px solid #36b446;
+  cursor: pointer;
+
+  /* box-shadow: 2px 2px 8px -2px #36B446; */
+}
+
+input[type="radio"] {
+  /* display: none; */
+}
+
+.label1,
+.label2 {
+  display: block;
+  height: 180px;
+  width: 75px;
+  background: linear-gradient(
+    to bottom,
+    white 0,
+    white 90px,
+    #36b446 90px,
+    #36b446 180px
+  );
+  position: absolute;
+  top: 0;
+  color: #36b446;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.label2 {
+  right: 0;
+}
+
+input:checked + label.noShadow {
+  all: unset;
+  font-family: "Segoe UI Custom", sans-serif;
+  font-size: normal;
+}
+
+input:checked + label {
+  background-position: 0 -90px;
+  -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* all: unset !important; */
+}
+
+.bgColorIncome {
+  background-color: #36b446;
+}
+
+/* ------------------------------------------------- */
+.radiobutton2:hover {
+  cursor: pointer;
+}
+
+.radiobutton2 {
+  background-color: white;
+  height: 35px;
+  width: 280px;
+  border: 2px solid red;
+  position: absolute;
+  border-radius: 10px;
+  overflow: hidden;
+  /* border: 1px solid #36B446; */
+  /* box-shadow: 2px 2px 8px -2px #36B446; */
+}
+
+input[type="radio"] {
+  /* display: none; */
+}
+
+.label11 {
+  display: block;
+  height: 180px;
+  width: 150px;
+  background: linear-gradient(
+    to bottom,
+    white 0,
+    white 90px,
+    #36b446 90px,
+    #36b446 180px
+  );
+  position: absolute;
+  top: 0;
+  color: #36b446;
+  transition: 0.5s;
+}
+
+.label22 {
+  display: block;
+  height: 180px;
+  width: 45px;
+  background: linear-gradient(
+    to bottom,
+    white 0,
+    white 90px,
+    #36b446 90px,
+    #36b446 180px
+  );
+  position: absolute;
+  top: 0;
+  color: #36b446;
+  transition: 0.5s;
+}
+
+/* .label22 {
+  right: 0;
+} */
+
+.span1 {
+  display: flex;
+  height: 35px;
+  width: 130px;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI Custom", sans-serif;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.span2 {
+  display: flex;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+
+  font-family: "Segoe UI Custom", sans-serif;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+input:checked + label {
+  background-position: 0 -90px;
+  color: white;
+  transition: 0.7s;
+}
+
+.bgColorIncome2 {
+  background-color: #36b446;
+}
+
+.bgColorIncomeBlack {
+  background-color: #1b1b1b;
+}
+
+.btn-outline-success1 {
+  background-color: white;
+  border: 1px solid #36b446;
+}
+
+.btn-outline-success1:checked {
+  border: 1px solid red;
+}
+
+.InvestmentCollapse {
+  background-color: #36b446;
+  border-radius: 15px;
+  color: white;
+}
+
+#MainInvestment {
+  margin-left: 0.8rem;
+  margin-right: 0.8rem;
+}
+
+.sideBar2 {
+  background-color: #ffff;
+  color: black;
+  height: 100vh;
+  /* 
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px; */
+
+  box-shadow: 0 0 10px rgba(37, 99, 233, 0.192);
+
+  position: fixed;
+  z-index: 100;
+  /* margin-top: -80px; */
+  transition: width 0.5s ease;
+}
+
+.sideBarNew {
+  background-color: white;
+  color: black;
+  height: 100rem;
+  /* border: 1px solid #1A1A1A; */
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  z-index: 100;
+  margin-top: -80px;
+  transition: width 0.5s ease;
+  overflow: hidden;
+  padding-top: 5rem;
+}
+
+.topBar {
+  border-radius: 20px;
+  background-color: white;
+  color: #36b446;
+}
+
+.mainrow {
+  background-color: #488a99;
+}
+
+h6 {
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+/* 
+li {
+  list-style: none;
+  font-weight: 500;
+  margin-top: 30px;
+  padding-left: 8%;
+}
+li:hover {
+  color: #36b446;
+  cursor: pointer;
+} */
+
+/* dropdown */
+
+.dropbtn {
+  background-color: #04aa6d;
+  color: white;
+
+  border: none;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.dropdown.active {
+  color: #36b446 !important;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  /* background-color: white; */
+  background-color: #f8f8ff;
+  /* color: #36B446; */
+  min-width: 140px;
+  border: 1px solid #36b446;
+
+  /* box-shadow: 0px 8px 16px 0px #3e8e41; */
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+
+  z-index: 1;
+  /* text-align: center; */
+}
+
+.dropdown-content a {
+  /* color: #3e8e41; */
+  color: black;
+
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #3e8e41;
+  color: white;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+}
+
+/* dropdown */
+
+.Shear_Icons {
+  bottom: 10px;
+  left: -90px;
+  position: fixed;
+}
+
+.share {
+  bottom: 10px;
+  left: -60px;
+  position: fixed;
+}
+
+.SideMenuBurger {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .sideBar2 {
+    width: 0px;
+    display: none;
+  }
+
+  .SideMenuBurger {
+    display: block;
+  }
+
+  .topMaiBody {
+    padding-left: 0rem !important;
+    transition: all 0.5s ease;
+  }
+}
+
+.logoText div {
+  color: #191919;
+  position: absolute;
+  right: 20px;
+  top: 0px;
+}
+
+.logoText h5 span {
+  all: unset;
+  font-family: "Segoe UI Custom", sans-serif;
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: 25px;
+}
+
+.logoText h5 {
+  font-family: "Segoe UI Custom", sans-serif;
+  font-size: 25px;
+  font-weight: 800 !important;
+  padding: 0px;
+  margin: 0px;
+}
+
+.logoText {
+  width: 100%;
+  font-size: 25px;
+  /* padding-top: 50px; */
+  color: #36b446;
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+
+  position: relative;
+}
+
+.PoppinsFamily {
+  font-family: "Segoe UI Custom", sans-serif;
+  font-optical-sizing: auto !important;
+}
+
+.DMFamily {
+  font-family: "Segoe UI Custom", sans-serif;
+  font-optical-sizing: auto !important;
+}
+
+.LeagueSpartanFamily {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Segoe UI Custom", sans-serif;
+  /* font-optical-sizing: auto !important; */
+  font-weight: 400 !important;
+  font-size: 32px !important;
+  font-style: bold !important;
+}
+
+.navy_Text {
+  color: #1b254b;
+}
+
+.navy_Bg {
+  background-color: #1b254b;
+}
+
+.green_Bg {
+  background-color: #36b446;
+}
+
+.green_Text {
+  color: #36b446;
+}
+
+.custom_Shadow {
+  box-shadow: 0 5px 10px rgba(37, 99, 233, 0.387);
+}
+
+.SideItem_Size {
+  font-size: 16px !important;
+  font-weight: 700;
+}
+
+/* Goalskichus */
+.minheight73 {
+  min-height: 73vh;
+}
+
+.cashFlowCardHead {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1b254b;
+}
+
+.Top_Nav {
+  border-radius: 10px;
+  padding: 0px 10px;
+  margin: 0px 10px;
+  background-color: transparent !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.Top_Nav .Page {
+  font-size: 33px;
+  font-weight: 700;
+  color: #1b254b;
+}
+
+.Top_Nav .BreadcrumbCustom {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.Top_Nav .BreadcrumbCustom .breadcrumb {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.Top_Nav .BreadcrumbCustom .breadcrumb .breadcrumb-item {
+  font-size: 14px;
+  font-weight: 400;
+  color: #1b254b;
+  height: 40px !important;
+}
+
+.Top_Nav .breadcrumb-item + .breadcrumb-item::before {
+  float: left;
+  padding-right: 0px;
+}
+
+.Top_Nav .rightBlock {
+  height: 3rem;
+  width: 13%;
+  background-color: white;
+  border-radius: 50px;
+  padding: 5px;
+  box-shadow: 0 5px 10px rgba(37, 99, 233, 0.387);
+  /* display: flex;
+  justify-content: space-around;
+  align-items: center; */
+  color: #a3aed0;
+  font-size: 30px;
+}
+
+.DashBoard {
+  padding: 10px;
+}
+
+.DashBoard .Greetings {
+  color: #1b254b;
+  font-size: 32px !important;
+  font-weight: 700;
+}
+
+.backBtn {
+  color: #36b446 !important;
+  border-color: #36b446 !important;
+
+  &&:is(:hover, :focus, :active) {
+    color: white !important;
+    background-color: #36b446 !important;
+  }
+}
+
+.modalBtn {
+  color: white !important;
+  background-color: #36b446 !important;
+  border-color: #36b446 !important;
+
+  &&:is(:hover, :focus, :active) {
+    border-color: #265527 !important;
+    background-color: #265527 !important;
+  }
+}
+
+.modalBG {
+  color: white !important;
+  background-color: #36b446 !important;
+}
+
+table tbody tr td:last-child {
+  text-align: center;
+}
+
+table thead tr {
+  border: none;
+}
+
+table thead tr:first-child th {
+  background-color: #36b446;
+  color: #f8f8ff;
+}
+
+table thead tr:first-child th:first-child {
+  border-top-left-radius: 10px !important;
+  /* background-color: pink; */
+}
+
+table thead tr:first-child th:last-child {
+  border-top-right-radius: 10px !important;
+  /* background-color: red; */
+}
+
+input[type="checkbox"]:checked + .femaleSmoking {
+  border-radius: 50%;
+  border: 5px solid #04aa6d;
+  padding: 0px 0px 0px 0px;
+  width: 15%;
+}
+
+input[type="checkbox"]:checked + .femaleSmoking + .maleNonSmoking {
+  border-radius: 50%;
+  width: 15%;
+  border: 0px;
+}
+
+input[type="checkbox"] + .femaleSmoking {
+  border-radius: 50%;
+  width: 15%;
+}
+
+input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
+  border-radius: 50%;
+  width: 15%;
+  border: 5px solid #04aa6d;
+  padding: 0px 0px 0px 0px;
+}
+
+.inputDesign {
+  padding: 8px !important;
+  border-color: #36b446 !important;
+
+  &&::placeholder {
+    color: #949494 !important;
+  }
+}
+
+.inputDesignDoubleInput {
+  padding: 8px !important;
+  border-color: #36b446 !important;
+
+  &&::placeholder {
+    color: #949494 !important;
+  }
+}
+
+.imgPerson {
+  transform: scale(1.1);
+}
+
+.popover .popover-header {
+  background-color: white !important;
+
+  &&:is(:hover, :focus, :active) {
+    background-color: whitesmoke !important;
+    /* background-color:#36b446 !important; */
+    color: #36b446;
+    cursor: pointer;
+  }
+
+  &&:is(:hover, :focus, :active):nth-child(2) {
+    border-radius: 8px 8px 0% 0% !important;
+  }
+
+  &&:is(:hover, :focus, :active):not(:first-child):not(:last-child) {
+    border-radius: 0%;
+  }
+
+  &&:is(:hover, :focus, :active):last-child {
+    border-radius: 0% 0% 8px 8px;
+  }
+}
+
+.font-Montserrat {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+/* Child Data */
+.childBtn .childBtn-item {
+  all: unset;
+  display: flex;
+  height: 35px;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+  font-family: "Segoe UI Custom", sans-serif;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 50px;
+  border: 0.5px solid gray;
+  color: gray;
+}
+
+.childBtn .childBtn-item.active {
+  border: 0.5px solid #36b446;
+  color: white;
+  background-color: #36b446;
+}
+
+.childBtn:hover .childBtn-item {
+  border: 0.5px solid #36b446;
+  color: white;
+  background-color: #36b446;
+}
+
+.childBtn.Selected:hover .childBtn-item {
+  border: 0.5px solid gray;
+  color: gray;
+  background-color: white;
+}
+
+.childBtn.Selected:hover .childBtn-item.active {
+  border: 0.5px solid #36b446;
+  color: white;
+  background-color: #36b446;
+}
+
+.childBtn .childBtn-item:hover ~ .childBtn-item {
+  border: 0.5px solid gray;
+  color: gray;
+  background-color: white;
+  box-shadow: none;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #36b446;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .Top_Nav .rightBlock {
+    width: 10%;
+    font-size: 30px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  /* .Top_Nav {
+    display: none;
+  }
+  .Top_Nav .rightBlock {
+    display: none;
+  } */
+}
+
+/* You Might not need it any more */
+.childBtn {
+  display: inline-block;
+  border: 0px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
+  background-color: grey;
+  padding-top: 8px;
+}
+
+.childBtn:hover {
+  border: 0px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+
+  background-color: grey;
+}
+
+.selectedchildBtn {
+  border: 0px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: white;
+  background-color: #36b446;
+}
+
+input[type="checkbox"]:checked + .femaleSmoking {
+  border-radius: 50px;
+  border: 5px solid #04aa6d;
+  padding: 0px 0px 0px 0px;
+  width: 15%;
+}
+
+input[type="checkbox"]:checked + .femaleSmoking + .maleNonSmoking {
+  border-radius: 50px;
+  width: 15%;
+  border: 0px;
+}
+
+input[type="checkbox"] + .femaleSmoking {
+  border-radius: 50px;
+  width: 15%;
+}
+
+input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
+  border-radius: 50px;
+  width: 15%;
+  border: 5px solid #04aa6d;
+  padding: 0px 0px 0px 0px;
+}
+
+.imgPerson {
+  transform: scale(1.1);
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.text-green {
+  color: #36b446;
+}
+
+.curser-pointer {
+  cursor: pointer;
+}
+
+.PersonalDetails {
+  /* background-color: #36b44718 !important; */
+
+  border: 1px solid #36b446 !important;
+  border-radius: 50px !important;
+}
+
+.min-w-25 {
+  min-width: 9% !important;
+  /* max-width: 9% !important; */
+}
+
+.ant-notification-notice-icon {
+  width: 35px !important;
+}
+
+.ant-notification-notice-message {
+  text-align: left !important;
+}
+
+.ant-notification-notice-message span {
+  width: 90% !important;
+  text-align: left !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  justify-content: left !important;
+}
+
+.QuestionYesNoCenter {
+  text-align: center;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+/* komail React select custom css */
+.css-1u9des2-indicatorSeparator {
+  -webkit-align-self: stretch;
+  -ms-flex-item-align: stretch;
+  align-self: stretch;
+  width: 1px;
+  background-color: hsl(0, 0%, 80%);
+  margin-bottom: 8px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  height: auto;
+}
+
+.dropDownTd {
+  position: relative;
+}
+
+.dropdown-arrow {
+  position: absolute;
+  top: 100%;
+  left: 90%;
+  transform: translateX(-70%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #ffffff;
+}
+
+.dropdown-arrow::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #36b447a2;
+}
+
+.dropDownHover:hover {
+  background-color: #a3aed053 !important;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.submitPadding {
+  padding: 0px 28px !important;
+}
+
+@media only screen and (min-width: 1440px) {
+  .centerDiv {
+    max-width: 33%;
+    margin: 0 auto;
+    display: block;
+    /* border: 2px solid red; */
+  }
+
+  .inputDesign {
+    max-width: 33%;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .cardInputGroup {
+    max-width: 33%;
+    /* border: 2px solid red; */
+  }
+
+  .submitPadding {
+    padding: 0px 7.9% !important;
+  }
+
+  .cashFlowNextBtn {
+    padding: 0px 7% !important;
+  }
+
+  .DateIconParent .react-datepicker__calendar-icon {
+    margin-left: calc(50% - 30%);
+  }
+}
+
+.goalsPara span {
+  all: unset;
+  color: red;
+}
+
+.form-label {
+  font-size: 16px;
+  color: #000;
+  font-weight: 700;
+  margin: 0px !important;
+}
+
+.form-label-Questions {
+  font-size: 16px;
+  color: #000;
+  font-weight: 500;
+  margin: 15px 0px 0px 0px !important;
+  /* text-align: justify; */
+}
+
+input::placeholder {
+  text-align: center;
+}
+
+.form-select {
+  /* padding: 8px !important; */
+  padding: 8px 30px 8px 8px !important;
+  border-radius: 5px !important;
+  min-width: 6rem !important;
+  /* width: 100%; */
+  box-shadow: none !important;
+}
+
+.no-right-radius {
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
+.shadow {
+  box-shadow: none !important;
+}
+
+label {
+  font-family: "Segoe UI Custom", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.form-check {
+  display: flex !important;
+  min-height: 1.5rem;
+  padding-left: 1.5em;
+  margin-bottom: 0.125rem;
+  justify-content: center;
+}
+
+.customBorder {
+  border: 2px solid #36b446;
+  background-color: #36b44f10;
+}
+
+.DateInputPadding {
+  padding: 8px 8px 8px 30px !important;
+}
+
+.react-datepicker__calendar-icon {
+  margin-top: 4px;
+}
+
+.RiskCard {
+  border: 1.5px solid #36b446;
+  border-radius: 25px;
+  padding: 25px;
+}
+
+.ant-modal-confirm-title {
+  width: 100% !important;
+  /* align-items: start; */
+  justify-content: start;
+  padding-left: 5px;
+}
+
+.primary {
+  background-color: #36b446 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.Fs-24 {
+  font-size: 20px;
+}
+
+.modalNumberWidth {
+  max-width: 7%;
+}
+
+/* Custom Scroll */
+
+/* Custom scrollbar styles for WebKit-based browsers (Chrome, Safari) */
+.customScroll::-webkit-scrollbar {
+  width: 3px;
+  /* Width of the scrollbar */
+}
+
+.customScroll::-webkit-scrollbar-track {
+  background: #dcdcdc;
+  /* Track background */
+}
+
+.customScroll::-webkit-scrollbar-thumb {
+  background-color: #36b446;
+  /* Thumb color */
+  border-radius: 25px;
+  /* Rounded corners for the thumb */
+}
+
+/* Custom scrollbar styles for Firefox */
+.customScroll {
+  scrollbar-width: thin;
+  /* Thin scrollbar */
+  scrollbar-color: #36b446 #dcdcdc;
+  /* Thumb color and track color */
+  height: 7.5rem !important;
+}
+
+.customScroll::-moz-scrollbar {
+  width: 3px;
+  /* Firefox scrollbar width */
+}
+
+.customScroll::-moz-scrollbar-thumb {
+  background-color: #36b446;
+  /* Thumb color */
+  border-radius: 25px;
+  /* Rounded corners for the thumb */
+}
+
+.customScroll::-moz-scrollbar-track {
+  background: #dcdcdc;
+  /* Track background */
+}
+
+.superAdminAccordian .accordion-button {
+  background-color: #36b446 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+
+  &&:is(:hover, :focus, :active) {
+    box-shadow: none !important;
+  }
+}
+
+.superAdminAccordian .CSVBtn {
+  border: 2px dashed lightgray;
+  color: gray !important;
+  background-color: transparent !important;
+
+  &&:is(:hover, :focus, :active) {
+    border: 2px dashed #36b446;
+    color: #36b446 !important;
+    background-color: transparent !important;
+  }
+}
+
+.superAdminAccordian .customCard {
+  padding: 15px;
+  background-color: #28d73f2a;
+  color: black;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+}
+
+.CustomPaginantion .ant-pagination-item {
+  /* background-color: red !important; */
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.CustomPaginantion .ant-pagination-prev {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.CustomPaginantion .ant-pagination-next {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.upload-container span {
+  height: auto !important;
+  width: auto !important;
+  justify-content: start !important;
+}
+
+.upload-container .ant-upload-wrapper {
+  width: 100%;
+  min-height: 10rem;
+  flex-direction: column;
+}
+
+.upload-container .ant-upload-wrapper .ant-upload-list-item-actions .anticon {
+  color: #000 !important;
+}
+
+.upload-container .ant-upload-wrapper .ant-upload-list {
+  width: 100%;
+}
+
+.upload-container {
+  width: 100%;
+  min-height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.upload-container .ant-upload {
+  height: 100%;
+}
+
+.upload-container .ant-upload-drag-icon {
+  margin-bottom: 16px;
+}
+
+.GoalsobjectiveCard input {
+  text-align: center !important;
+}
+
+.modal-90w.modal-dialog {
+  max-width: 95vw !important;
+  /* 90% of the viewport width */
+  margin-left: 2.5% !important;
+}
+
+.CardImg {
+  width: 35%;
+}
+
+.customInputGroupSelect {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+}
+
+.customCardList {
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #28d73f2a;
+  color: black;
+  /* min-height: 7rem !important; */
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  border: 1px solid #36b446;
+}
+
+.cashFlowAllUsers .accordion .accordion-item {
+  border: 1px solid #36b446 !important;
+}
+
+.cashFlowAllUsers
+  .accordion
+  .accordion-item
+  .accordion-header
+  .accordion-button::after {
+  content: "";
+  /* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e"); */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+}
+
+.cashFlowAllUsers
+  .accordion
+  .accordion-item
+  .accordion-header
+  .accordion-button {
+  background-color: #36b446 !important;
+  color: white;
+  box-shadow: none !important;
+  border-bottom: 1px solid white !important;
+}
+
+.bg-Custom-green {
+  background-color: #bafae252 !important;
+  border-color: #bafae252 !important;
+}
+
+/* .GInputSelect {
+  display: flex !important;
+  flex-direction: row !important;
+} */
+
+.GInputSelect .form-select {
+  min-width: 3rem !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
+.ClearDropDownSpanDouble li span.ant-dropdown-menu-title-content {
+  display: unset !important;
+  height: unset !important;
+  width: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+}
+
+/* Target the last two Delete menu items specifically */
+.ClearDropDownSpanDouble .ant-dropdown-menu-item:nth-last-child(-n + 2) {
+  color: #d20303;
+
+  /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #ac0202;
+    /* Set the background to red  d20303*/
+    color: white;
+    /* Set the text color to white */
+  }
+}
+
+.ClearDropDownSpanSingle li span.ant-dropdown-menu-title-content {
+  display: unset !important;
+  height: unset !important;
+  width: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+}
+
+/* Target the last two Delete menu items specifically */
+.ClearDropDownSpanSingle .ant-dropdown-menu-item:nth-last-child(-n + 1) {
+  color: #d20303;
+
+  /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #ac0202;
+    /* Set the background to red  d20303*/
+    color: white;
+    /* Set the text color to white */
+  }
+}
+
+.bg-gray {
+  background: #a0a0a05d;
+}
+
+.custom-loading-bar {
+  position: absolute !important;
+  top: 0;
+  width: 100%;
+}
+
+.borderColor_Green {
+  border: 1px solid #36b446 !important;
+}
+
+.liabilityCardHeight {
+  height: 36vh !important;
+}
+
+@media only screen and (max-width: 425px) {
+  .funnel-container .LibilityHead {
+    padding: 0px 20px 0px 35px;
+  }
+}
+
+@media only screen and (min-width: 425px) {
+  .funnel-container .leftside {
+    margin-top: 0vh !important;
+    padding-right: 10px !important;
+    /* margin-right: 10px; */
+  }
+
+  .funnel-container .rightside {
+    margin-top: 0vh !important;
+    padding-left: 10px !important;
+    align-items: start !important;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 48px !important;
+    margin-right: 0px;
+  }
+
+  .funnel-container .rightside {
+    margin-top: 30vh !important;
+    padding-left: 48px !important;
+    align-items: end !important;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 54%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 77%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 67%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 90%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+
+  .funnel-container .LibilityHead {
+    padding: 0px 20px 0px 35px;
+  }
+}
+
+@media screen and (min-width: 425px) and (max-width: 768px) {
+  .liabilityCardHeight {
+    height: 10vh !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .liabilityCardHeight {
+    height: 14.5vh !important;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+  .liabilityCardHeight {
+    height: 220px !important;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 48px !important;
+  }
+
+  .funnel-container .rightside {
+    margin-top: 30vh !important;
+    padding-left: 48px !important;
+    background: none;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 54%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 77%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 67%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 90%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 50px !important;
+  }
+
+  .funnel-container .rightside {
+    margin-top: 30vh !important;
+    padding-left: 50px !important;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 53%;
+    left: -12%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 73%;
+    left: -12%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 72%;
+    left: 62%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 92%;
+    left: 62%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+
+  .liabilityCardHeight {
+    height: 13.5vh !important;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 4.5% !important;
+  }
+
+  .funnel-container .rightside {
+    margin-bottom: 15vh !important;
+    padding-left: 4.5% !important;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 59%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 67%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 61%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 72%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+}
+
+/* Ensure Inter font is applied to Ant Design Table in .reportSection */
+.reportSection .ant-table,
+.reportSection .ant-table-container,
+.reportSection .ant-table-thead > tr > th,
+.reportSection .ant-table-tbody > tr > td,
+.reportSection .ant-table-thead,
+.reportSection .ant-table-tbody,
+.reportSection .ant-table-summary {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+.reportSection span {
+  display: inline;
+  height: auto;
+  width: auto;
+  justify-content: normal;
+  align-items: normal;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.reportSection .ant-table-title {
+  padding: 0px !important;
+}
+
+.reportSection table thead tr:first-child th:first-child,
+.reportSection table thead tr:last-child th:last-child {
+  border-radius: 0px !important;
+}
+
+.reportSection.All_Client table thead tr:first-child th:first-child {
+  border-top-left-radius: 8px !important;
+}
+
+.reportSection.All_Client table thead tr:last-child th:last-child {
+  border-top-right-radius: 8px !important;
+}
+
+.reportSection .ant-table-thead > tr > th {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+  border-radius: 0px !important;
+}
+
+.reportSection .ant-table-summary > tr {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}
+
+.reportSection .ant-table-summary > tr > td {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}
+
+.reportSection .ant-table-tbody > tr.green-summary-row > td {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}
+
+.reportSection p,
+.reportSection h1,
+.reportSection h2,
+.reportSection h3,
+.reportSection h4,
+.reportSection h5,
+.reportSection h6 .reportSection span,
+.reportSection label {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+.profile-temp-container p,
+.profile-temp-container h1,
+.profile-temp-container h2,
+.profile-temp-container h3,
+.profile-temp-container h4,
+.profile-temp-container h5,
+.profile-temp-container h6 .profile-temp-container span,
+.profile-temp-container label {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+.reportSection .highlight-green-row {
+  background-color: #36b446 !important;
+  color: white !important;
+}
+
+.reportSection .highlight-green-row > td {
+  background-color: #36b446 !important;
+  color: white !important;
+}
+
+.custom-dropdown-scope li,
+.ant-dropdown-menu-submenu li {
+  list-style: initial !important;
+  margin-top: inherit !important;
+  padding-left: 0 !important;
+  /* font-weight: normal !important; */
+
+  display: inline;
+  height: auto;
+  width: auto;
+  justify-content: normal;
+  align-items: normal;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.custom-dropdown-scope span,
+.ant-dropdown-menu-submenu span {
+  /* all: unset !important;
+  font: inherit !important;
+  color: inherit !important; */
+
+  display: inline;
+  height: auto;
+  width: auto;
+  justify-content: normal;
+  align-items: normal;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.ant-dropdown-menu-submenu li {
+  padding-left: inherit !important;
+}
+
+.inputlikeButton {
+  padding: 20px !important;
+  width: 100%;
+  border-color: #36b446 !important;
+
+  &&::placeholder {
+    color: #949494 !important;
+  }
+}
+
+.inputlikeButton .ant-space {
+  display: flex;
+  justify-content: space-between;
+}
+
+.funnel-container .CardActive {
+  background-color: #36b446 !important;
+  color: white !important;
+  border: none;
+}
+
+.funnel-container .CardActive .text-green {
+  color: white !important;
+}
+
+.info-icon {
+  cursor: pointer !important;
+  color: #36b446 !important;
+
+  &&:is(:hover, :focus, :active) {
+    color: #265527 !important;
+  }
+}
+
+.ClearDropDownSpan .custom-danger-option {
+  color: #cf1322 !important;
+
+  /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #cf1322 !important;
+    /* Set the background to red  d20303*/
+    color: white !important;
+    /* Set the text color to white */
+  }
+}
+
+.ClearDropDownSpan .custom-success-option {
+  color: #36b446 !important;
+
+  /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #36b446 !important;
+    /* Set the background to red  d20303*/
+    color: white !important;
+    /* Set the text color to white */
+  }
+}
+
+.fontFamily-Inter {
+  font-family: "Segoe UI Custom", sans-serif;
+}
+
+.profile-temp-container .profile-card {
+  border-radius: 12px;
+  overflow: hidden;
+  height: fit-content;
+  margin-top: -40px;
+  background-color: #ffffff;
+  padding: 10px;
+}
+
+@media only screen and (max-width: 425px) {
+  .profile-temp-container .profile-card {
+    margin-top: -100px;
+    background-color: #36b446;
+  }
+}
+
+.pricingTable .ant-card {
+  transition: all 0.3s ease;
+}
+
+.pricingTable .ant-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  background-color: rgb(242, 255, 246);
+}
+
+.pricingTable .slide-top {
+  -webkit-animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slide-top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@-webkit-keyframes slide-top {
+  0% {
+    -webkit-transform: translateY(100px);
+    transform: translateY(100px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+}
+
+@keyframes slide-top {
+  0% {
+    -webkit-transform: translateY(100px);
+    t-ransform: translateY(100px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+  }
+}
+
+.SearchAnimate .expandable-search {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.SearchAnimate .search-icon-btn {
+  transition: all 0.3s ease;
+}
+
+.SearchAnimate .input-wrapper {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.SearchAnimate .input-wrapper input {
+  width: 200px;
+  transition: width 0.3s ease;
+}
+
+.SearchAnimate .input-wrapper .close-btn {
+  margin-left: 4px;
+}
+
+.SearchAnimate .expandable-search.expanded .input-wrapper {
+  width: 250px;
+  opacity: 1;
+  margin-left: 8px;
+}
+
+.container-fluid-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  overflow: visible;
+  transition: flex 0.3s ease;
+}
+
+.main-content {
+  flex-grow: 1;
+  transition: width 0.3s ease;
+}
+
+.AdminSideBar {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 250px;
+  /* default expanded width */
+  transition: width 0.3s ease;
+  background-color: white;
+  /* or your design */
+  overflow: hidden;
+  z-index: 100;
+}
+
+.AdminSideBar.collapsed {
+  width: 80px;
+  /* collapsed width */
+}
+
+.CustomLink {
+  color: rgba(33, 37, 41, 0.75);
+
+  :is(:hover, :focus, :active) {
+    color: #36b446 !important;
+  }
+}
+
+.pushToAdviserlink .card {
+  padding: 5px;
+
+  :is(:hover) {
+    background-color: #f8f8f8;
+  }
+}
+
+.pushToAdviserlink .card .ant-btn span {
+  background-color: inherit;
+}
+
+.pushToAdviserlink .card .card-body {
+  border-radius: 15px;
+}
+
+/* Abdul Moeed css */
+
+.custom-list-item {
+  transition: all 0.3s ease;
+  padding: 10px 16px !important;
+}
+
+.custom-list-item:hover {
+  background-color: rgba(211, 211, 211, 0.36) !important;
+  /* dark green */
+}
+
+.custom-list-item:hover .list-title {
+  color: black !important;
+}
+
+.delete-icon {
+  color: red !important;
+  transition: transform 0.2s ease;
+}
+
+.delete-icon:hover {
+  transform: scale(1.2);
+}
+
+.custom-card {
+  padding: 0px !important;
+  /* width :"50%"; */
+  background: white !important;
+  margin: 20px auto !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+  border: none !important;
+}
+
+.InstitudeAndOfferCustomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 16px;
+  background-color: #36b446;
+  color: white;
+  font-weight: bold;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+}
+
+.datepicker-popper {
+  position: absolute !important;
+  z-index: 20000 !important; /* higher than your table or modal */
+}
+
+.ProfilePicButton {
+  position: absolute;
+  bottom: 8px;
+  right: calc(50% - 60px + 8px);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &&:is(:hover, :focus, :active) {
+    background-color: #e0e0e0;
+  }
+}

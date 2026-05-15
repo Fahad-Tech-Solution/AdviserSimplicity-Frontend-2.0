@@ -1,0 +1,444 @@
+import { Form, Formik } from "formik";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRecoilValue } from "recoil";
+import {
+  BankDetail,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../../Store/Store";
+import {
+  openNotificationSuccess,
+  toCommaAndDollar,
+  PostAxios,
+  PatchAxios,
+  RenderName,
+  replacePlaceholderWithLabel,
+} from "../../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+import InnerModal from "./InnerModal";
+import PortfolioValue from "./PortfolioValue";
+import ServiceFee from "./ServiceFee";
+import { ConfigProvider, Select } from "antd";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
+
+const ManagedFunds = (props) => {
+  const bankDetailObj = useRecoilValue(BankDetail);
+
+  const [ShowError, setShowError] = useState({});
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
+
+  const [title] = useState(() => {
+    let currentTitle = props.modalObject.title;
+    if (currentTitle.includes("_")) {
+      currentTitle = currentTitle.split("_").slice(1).join("_");
+    }
+    return currentTitle;
+  });
+
+  const [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return localStorage.getItem("UserName");
+    } else if (props.modalObject.Input === "partner") {
+      return localStorage.getItem("PartnerName");
+    } else if (props.modalObject.Input === "joint") {
+      return (
+        localStorage.getItem("UserName") +
+        " & " +
+        localStorage.getItem("PartnerName")
+      );
+    }
+    return "";
+  });
+
+  // Existing data for that input type (client / partner / joint)
+  const existingData =
+    props.modalObject.values?.[
+      props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+    ]?.[props.modalObject.Input + "Array"] || [];
+
+  const initialValues = {
+    NumberOfMap: existingData.length || "",
+    managedFunds: existingData.length ? existingData : [],
+  };
+
+  const [dynamicFields, setDynamicFields] = useState([]);
+
+  useEffect(() => {
+    if (existingData.length) {
+      setDynamicFields(Array(existingData.length).fill(""));
+    }
+  }, [existingData]);
+
+  const fillInitialValues = (setFieldValue) => {
+    if (existingData.length) {
+      setFieldValue("managedFunds", existingData);
+    } else {
+      props.setIsEditing(true);
+    }
+  };
+
+  const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    let index = stakeHolder.replace(/[^0-9-]+/g, "");
+    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+    let selectedPlatformId = values?.[BaseKey]?.[index]?.platformName || "";
+
+    if (!selectedPlatformId) {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Please! select platform name first`,
+      );
+      return false;
+    }
+
+    const platforms =
+      title === "Platform Investments" ||
+      title == "SMSF Platform Investments" ||
+      title == "Family Trust Platform Investments"
+        ? bankDetailObj?.InvestmentPlatforms
+        : bankDetailObj?.InvestmentBonds;
+
+    let Platform =
+      platforms?.find((elem) => elem._id === selectedPlatformId) || [];
+
+    console.log(Platform);
+
+    let titlePrefix = ["client", "partner", "joint"].includes(
+      props.modalObject.stakeHolder.replace(".", ""),
+    )
+      ? RenderName(props.modalObject.stakeHolder.replace(".", ""))
+      : props.modalObject.stakeHolder.replace(".", "");
+
+    setModalObject({
+      title:
+        titlePrefix +
+        replacePlaceholderWithLabel(
+          getPlatformOptions(),
+          values?.[BaseKey]?.[index]?.platformName,
+          innerModalTitle,
+        ),
+      question: `Number of Investments :`,
+      key,
+      stakeHolder,
+      editArray: values?.[BaseKey]?.[index]?.[key + "Array"] || [],
+      values,
+      Platform,
+    });
+    setFlagState(true);
+  };
+
+  const InvestmentPlatformsBanks = [
+    "Platform Investments",
+    "Family Trust Platform Investments",
+    "SMSF Platform Investments",
+  ];
+
+  const CheckInputValue = (
+    values,
+    setFieldValue,
+    currentInput,
+    stakeHolder,
+  ) => {
+    if (!stakeHolder) {
+      return false;
+    }
+
+    let index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    const portfolioArray = values?.[BaseKey]?.[index]?.portfolioArray || [];
+    const ExpectedSum = portfolioArray.reduce(
+      (total, entry) =>
+        total +
+        parseFloat(entry.investmentValue?.replace(/[^0-9.-]+/g, "") || 0),
+      0,
+    );
+    const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+    if (ExpectedSum !== data) {
+      setShowError((prev) => ({
+        ...prev,
+        [`portfolioValue${index}Error`]: true,
+        [`portfolioValue${index}Message`]:
+          "Total must equal the sum of all investment values filled in the popup. The sum is " +
+          toCommaAndDollar(ExpectedSum),
+      }));
+    } else {
+      setShowError((prev) => ({
+        ...prev,
+        [`portfolioValue${index}Error`]: false,
+        [`portfolioValue${index}Message`]: "",
+      }));
+    }
+  };
+
+  const onSubmit = async (values) => {
+    const DataOf = props.modalObject.Input;
+    const fundData = (values.managedFunds || []).slice(0, values.NumberOfMap);
+
+    console.log("Managed Fund Submit:", props.modalObject, values);
+
+    // 🧮 Compute totals
+    const totalFee = fundData.reduce(
+      (sum, entry) =>
+        sum + parseFloat(entry.portfolioValue?.replace(/[^0-9.-]+/g, "") || 0),
+      0,
+    );
+
+    const totalCostBase = fundData.reduce(
+      (sum, entry) =>
+        sum +
+        parseFloat(entry.totalPortfolioCost?.replace(/[^0-9.-]+/g, "") || 0),
+      0,
+    );
+
+    // 🧾 Save computed values into Formik state
+    props.setFieldValue(
+      props.modalObject.stakeHolder + DataOf + "Array",
+      fundData,
+    );
+
+    props.setFieldValue(
+      props.modalObject.stakeHolder + "currentBalance",
+      toCommaAndDollar(totalFee),
+    );
+
+    props.setFieldValue(
+      props.modalObject.stakeHolder + "costBase",
+      toCommaAndDollar(totalCostBase),
+    );
+
+    // 🚫 Clear related validation errors (if any)
+    props.modalObject.setShowError?.((prev) => ({
+      ...prev,
+      [`${DataOf + "currentBalance"}Error`]: false,
+      [`${DataOf + "costBaseTemp"}Error`]: false,
+    }));
+
+    // 🏁 Close modal if flag is set
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
+  };
+
+  const getPlatformOptions = () => {
+    if (InvestmentPlatformsBanks.includes(title)) {
+      return (
+        bankDetailObj?.InvestmentPlatforms?.map((elem) => ({
+          value: elem._id,
+          label: elem.platformName,
+        })) || []
+      );
+    }
+    return (
+      bankDetailObj?.InvestmentBonds?.map((elem) => ({
+        value: elem._id,
+        label: elem.platformName,
+      })) || []
+    );
+  };
+
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "owner",
+      key: "owner",
+      width: 60,
+    },
+    {
+      title: "Platform Name",
+      dataIndex: "platformName",
+      key: "platformName",
+      type: "select",
+      options: getPlatformOptions(),
+      placeholder: "Select Platform",
+      selectedOptionValue: true,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.platformName || "").toString().toUpperCase();
+          const valB = (b.platformName || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
+    },
+    {
+      title: "Account Number",
+      dataIndex: "accountNumber",
+      key: "accountNumber",
+      type: "text",
+      placeholder: "Account Number",
+    },
+    {
+      title: "Portfolio Value",
+      dataIndex: "portfolioValue",
+      key: "portfolioValue",
+      type: "number-toComma-Modal",
+      placeholder: "Portfolio Value",
+      innerModalTitle: "_<CFE>_Portfolio Value",
+      callBack: true,
+      inputChangeFunc: CheckInputValue,
+      func: handleInnerModal,
+      errorHandler: ShowError,
+      disabled: true,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.portfolioValue || "").toString().toUpperCase();
+          const valB = (b.portfolioValue || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
+    },
+    {
+      title: "Total Costbase",
+      dataIndex: "totalPortfolioCost",
+      key: "totalPortfolioCost",
+      type: "number-toComma",
+      placeholder: "Portfolio Cost Base",
+    },
+    {
+      title: "Ongoing Advice Fee",
+      dataIndex: "serviceFee",
+      key: "serviceFee",
+      type: "number-toComma-Modal",
+      placeholder: "Ongoing Advice Fee",
+      innerModalTitle: "_<CFE>_Ongoing Annual Fee",
+      callBack: true,
+      inputChangeFunc: CheckInputValue,
+      func: handleInnerModal,
+      errorHandler: ShowError,
+      disabled: true,
+    },
+  ];
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize
+      innerRef={props.formRef}
+      onSubmit={onSubmit}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, [existingData]);
+
+        const dataRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            Array.from({ length: num }, (_, i) => {
+              setFieldValue(
+                `managedFunds[${i}].` + "serviceFee",
+                values.managedFunds?.[i]?.serviceFee || "$0",
+              );
+            });
+            return Array.from({ length: num }, (_, i) => ({
+              key: `managedFund.${i}`,
+              owner: i + 1,
+              stakeHolder: `managedFunds[${i}]`,
+              platformName: values.managedFunds?.[i]?.platformName || "",
+              accountNumber: values.managedFunds?.[i]?.accountNumber || "",
+              portfolioValue: values.managedFunds?.[i]?.portfolioValue || "",
+              portfolioArray: values.managedFunds?.[i]?.portfolioArray || "",
+              totalPortfolioCost:
+                values.managedFunds?.[i]?.totalPortfolioCost || "",
+              serviceFee: values.managedFunds?.[i]?.serviceFee || "$0",
+              serviceFeeType: values.managedFunds?.[i]?.serviceFeeType || "",
+            }));
+          }
+          return [];
+        }, [values.NumberOfMap, values.managedFunds]);
+
+        return (
+          <Form>
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+              setIsEditing={props.setIsEditing}
+            >
+              {modalObject.key === "portfolioValue" ? (
+                <PortfolioValue />
+              ) : modalObject.key === "serviceFee" ? (
+                <ServiceFee />
+              ) : (
+                ""
+              )}
+            </InnerModal>
+
+            <div className="d-flex justify-content-center align-items-center gap-4">
+              <p
+                className="text-end mt-1 pt-2 "
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                {" "}
+                Number of Platforms :{" "}
+              </p>
+              <div style={{ minWidth: "10%" }}>
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
+                >
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    disabled={!props?.isEditing}
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <Option key={i} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
+              </div>
+            </div>
+
+            {values.NumberOfMap && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
+                />
+              </div>
+            )}
+            <button type="submit" style={{ display: "none" }}>
+              Submit
+            </button>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+};
+
+export default ManagedFunds;

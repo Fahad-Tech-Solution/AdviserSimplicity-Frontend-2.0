@@ -1,0 +1,74 @@
+{
+    "owner": [
+        "client",
+        "partner"
+    ],
+    "client": {
+        "occupation": "Blanditiis facilis i",
+        "employmentStatus": "Full Time",
+        "nameOfCompany": "Branch and Weeks Plc",
+        "startDate": "2025-11-04T07:00:00.000Z",
+        "hoursWorked": 22,
+        "choiceOfFund": "Yes",
+        "SalaryPackageModal": {
+            "remunerationType": "Total Package",
+            "amount": "$600,000",
+            "SG": "12%",
+            "grossSalary": "$535,715",
+            "SGC": "$64,286",
+            "salarySacrificeContributions": "$22",
+            "afterTaxContributions": "$2,299"
+        },
+        "salaryPackagingRadio": "Yes",
+        "SalaryPackagingModal": {
+            "employerFBTStatus": "Full FBT",
+            "creditCardMortgageRepayments": "$1,414",
+            "costBaseOfCar": "$4,141",
+            "FBTPaidByEmployer": "Yes",
+            "runningCostsOfCar": "$4,141"
+        },
+        "leaveEntitlementsRadio": "Yes",
+        "LeaveEntitlementsModal": {
+            "annualLeaveAmount": 23,
+            "annualLeaveTime": "Days",
+            "sickLeaveAmount": 12,
+            "sickLeaveTime": "Weeks",
+            "longServiceLeaveAmount": 2117,
+            "longServiceLeaveTime": "Weeks"
+        }
+    },
+    "partner": {
+        "occupation": "Sed et in dolore duc",
+        "employmentStatus": "Part Time",
+        "nameOfCompany": "Austin Peters Associates",
+        "startDate": "2026-03-01T00:00:00.000Z",
+        "hoursWorked": 22,
+        "choiceOfFund": "Yes",
+        "SalaryPackageModal": {
+            "remunerationType": "Total Package",
+            "amount": "$10,000",
+            "SG": "12%",
+            "grossSalary": "$8,929",
+            "SGC": "$1,072",
+            "salarySacrificeContributions": "$10,000",
+            "afterTaxContributions": "$10,000"
+        },
+        "salaryPackagingRadio": "Yes",
+        "SalaryPackagingModal": {
+            "employerFBTStatus": "Exempt (17K Cap)",
+            "creditCardMortgageRepayments": "$10,000",
+            "costBaseOfCar": "$10,000",
+            "FBTPaidByEmployer": "No",
+            "runningCostsOfCar": "$1,000"
+        },
+        "leaveEntitlementsRadio": "Yes",
+        "LeaveEntitlementsModal": {
+            "annualLeaveAmount": 10,
+            "annualLeaveTime": "Weeks",
+            "sickLeaveAmount": 10,
+            "sickLeaveTime": "Days",
+            "longServiceLeaveAmount": 10,
+            "longServiceLeaveTime": "Weeks"
+        }
+    }
+}
